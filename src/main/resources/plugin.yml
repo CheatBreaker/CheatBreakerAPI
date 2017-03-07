@@ -1,0 +1,6 @@
+name: ${project.name}
+version: ${project.version}
+description: CheatBreaker API plugin
+author: CheatBreaker Development Team
+website: https://cheatbreaker.net
+main: net.cheatbreaker.api.CheatBreakerApi

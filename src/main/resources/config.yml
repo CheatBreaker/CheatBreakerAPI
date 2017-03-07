@@ -1,0 +1,31 @@
+api:
+  # URL to use when checking bans, do not modify.
+  host: api.cheatbreaker.com
+
+  # API key to use when checking bans
+  key: e14437c2-148b-47ce-8594-06737aa6b747
+
+# Waypoints which will be sent to the client when
+# they join the server.
+waypoints:
+  - name: &9Spawn
+    domain: spawn
+    location:
+      x: 125
+      y: 64
+      z: 672
+    forced: true
+  - name: &aEnd Arena Spawn
+    domain: 'arena.The End'
+    location:
+      x: 100
+      y: 70
+      z: 100
+    forced: false
+
+# Toggles if the CheatBreaker client will hide
+# numbers next to the scoreboard. Values:
+# FORCED_OFF: Numbers are hidden and cannot be shown by the user
+# FORCED_ON: Numbers are shown and cannot be hidden by the user
+# NEUTRAL: The user can toggle number visibility freely
+scoreboardNumbers: FORCED_OFF
