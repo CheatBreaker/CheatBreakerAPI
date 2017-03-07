@@ -1,7 +1,7 @@
-package net.cheatbreaker.api;
+package com.cheatbreaker.api;
 
-import net.cheatbreaker.api.message.CBMessage;
-import net.cheatbreaker.api.message.SendNotificationMessage;
+import com.cheatbreaker.api.message.CBMessage;
+import com.cheatbreaker.api.message.SendNotificationMessage;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;

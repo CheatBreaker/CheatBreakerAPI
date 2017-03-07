@@ -1,4 +1,4 @@
-package net.cheatbreaker.api.message;
+package com.cheatbreaker.api.message;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;

@@ -1,4 +1,4 @@
-package net.cheatbreaker.api;
+package com.cheatbreaker.api;
 
 import com.google.common.base.Preconditions;
 

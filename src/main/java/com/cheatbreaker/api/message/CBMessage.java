@@ -1,4 +1,4 @@
-package net.cheatbreaker.api.message;
+package com.cheatbreaker.api.message;
 
 import java.util.Map;
 
