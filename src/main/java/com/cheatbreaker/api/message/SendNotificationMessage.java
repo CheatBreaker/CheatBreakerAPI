@@ -16,6 +16,11 @@ public final class SendNotificationMessage implements CBMessage {
     }
 
     @Override
+    public String getAction() {
+        return "notification";
+    }
+
+    @Override
     public Map<String, Object> toMap() {
         return ImmutableMap.of(
             "message", notification.getMessage(),

@@ -55,7 +55,7 @@ public final class CheatBreakerApi extends JavaPlugin implements Listener {
 
     private void sendMessage(Player player, CBMessage message) {
         Map<String, Object> data = new HashMap<>();
-        data.put("action", message.getClass().getSimpleName());
+        data.put("action", message.getAction());
         data.putAll(message.toMap());
 
         byte[] bytes;

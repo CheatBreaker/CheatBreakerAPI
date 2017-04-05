@@ -1,3 +1,4 @@
+/*
 package com.cheatbreaker.api.message;
 
 import com.google.common.base.Preconditions;
@@ -17,6 +18,11 @@ public final class SetWaypointDomainsMessage implements CBMessage {
     }
 
     @Override
+    public String getAction() {
+        return null;
+    }
+
+    @Override
     public Map<String, Object> toMap() {
         return ImmutableMap.of(
             "primary", primary,
@@ -24,4 +30,4 @@ public final class SetWaypointDomainsMessage implements CBMessage {
         );
     }
 
-}
+}*/

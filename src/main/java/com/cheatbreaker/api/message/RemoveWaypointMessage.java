@@ -5,11 +5,11 @@ import com.google.common.collect.ImmutableMap;
 
 import java.util.Map;
 
-public class AddWaypointMessage implements CBMessage {
+public class RemoveWaypointMessage implements CBMessage {
 
     private final CBWaypoint waypoint;
 
-    public AddWaypointMessage(CBWaypoint waypoint) {
+    public RemoveWaypointMessage(CBWaypoint waypoint) {
         this.waypoint = waypoint;
     }
 
@@ -22,7 +22,6 @@ public class AddWaypointMessage implements CBMessage {
     public Map<String, Object> toMap() {
         return ImmutableMap.of(
                 "name", waypoint.getName(),
-                "xyz", waypoint.getX() + "," + waypoint.getY() + "," + waypoint.getZ(),
                 "dimension", waypoint.getDimension()
         );
     }

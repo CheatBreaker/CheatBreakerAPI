@@ -16,6 +16,11 @@ public final class SendCooldownMessage implements CBMessage {
     }
 
     @Override
+    public String getAction() {
+        return "cooldown";
+    }
+
+    @Override
     public Map<String, Object> toMap() {
         return ImmutableMap.of(
             "message", cooldown.getMessage(),
