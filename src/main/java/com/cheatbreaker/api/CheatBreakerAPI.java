@@ -5,6 +5,7 @@ import com.cheatbreaker.api.message.SendNotificationMessage;
 
 import com.cheatbreaker.api.message.StaffModuleStateMessage;
 import com.cheatbreaker.api.object.CBNotification;
+import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -18,12 +19,16 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-public final class CheatBreakerApi extends JavaPlugin implements Listener {
+public final class CheatBreakerAPI extends JavaPlugin implements Listener {
 
     private static final String PLUGIN_MESSAGE_CHANNEL = "MC_CLIENT";
 
+    @Getter private static CheatBreakerAPI instance;
+
     @Override
     public void onEnable() {
+        instance = this;
+
         saveDefaultConfig();
 
         Messenger messenger = getServer().getMessenger();

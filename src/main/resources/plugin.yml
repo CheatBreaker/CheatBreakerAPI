@@ -3,4 +3,4 @@ version: ${project.version}
 description: CheatBreaker API plugin
 author: CheatBreaker Development Team
 website: https://cheatbreaker.com
-main: com.cheatbreaker.api.CheatBreakerApi
+main: com.cheatbreaker.api.CheatBreakerAPI
