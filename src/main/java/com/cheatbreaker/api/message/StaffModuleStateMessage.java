@@ -32,7 +32,7 @@ public class StaffModuleStateMessage implements CBMessage {
 
         XRAY,
         NAME_TAGS,
-        NOC_LIP
+        NO_CLIP
 
     }
 
