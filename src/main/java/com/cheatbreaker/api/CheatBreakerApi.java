@@ -3,6 +3,7 @@ package com.cheatbreaker.api;
 import com.cheatbreaker.api.message.CBMessage;
 import com.cheatbreaker.api.message.SendNotificationMessage;
 
+import com.cheatbreaker.api.message.StaffModuleStateMessage;
 import com.cheatbreaker.api.object.CBNotification;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -43,6 +44,10 @@ public final class CheatBreakerApi extends JavaPlugin implements Listener {
 
     public void sendNotification(Player player, CBNotification notification) {
         sendMessage(player, new SendNotificationMessage(notification));
+    }
+
+    public void setStaffModuleState(Player player, StaffModuleStateMessage.StaffModule module, boolean state) {
+        sendMessage(player, new StaffModuleStateMessage(module, state));
     }
 
     public void sendNotificationOrFallback(Player player, CBNotification notification, Runnable fallback) {
