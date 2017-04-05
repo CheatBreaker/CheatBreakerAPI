@@ -3,6 +3,7 @@ package com.cheatbreaker.api;
 import com.cheatbreaker.api.message.CBMessage;
 import com.cheatbreaker.api.message.SendNotificationMessage;
 
+import com.cheatbreaker.api.object.CBNotification;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;

@@ -3,7 +3,7 @@ package com.cheatbreaker.api.message;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 
-import com.cheatbreaker.api.CBCooldown;
+import com.cheatbreaker.api.object.CBCooldown;
 
 import java.util.Map;
 

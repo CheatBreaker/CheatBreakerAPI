@@ -3,7 +3,7 @@ package com.cheatbreaker.api.message;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 
-import com.cheatbreaker.api.CBNotification;
+import com.cheatbreaker.api.object.CBNotification;
 
 import java.util.Map;
 
