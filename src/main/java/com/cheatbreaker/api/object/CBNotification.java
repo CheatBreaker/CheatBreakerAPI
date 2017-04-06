@@ -1,10 +1,9 @@
 package com.cheatbreaker.api.object;
 
 import com.google.common.base.Preconditions;
+import lombok.Getter;
 
 import java.util.concurrent.TimeUnit;
-
-import lombok.Getter;
 
 public final class CBNotification {
 

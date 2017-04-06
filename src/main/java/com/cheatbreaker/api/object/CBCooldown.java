@@ -1,12 +1,10 @@
 package com.cheatbreaker.api.object;
 
 import com.google.common.base.Preconditions;
-
+import lombok.Getter;
 import org.bukkit.Material;
 
 import java.util.concurrent.TimeUnit;
-
-import lombok.Getter;
 
 public final class CBCooldown {
 
