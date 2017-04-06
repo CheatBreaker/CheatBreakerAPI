@@ -6,6 +6,7 @@ import com.cheatbreaker.api.message.SendNotificationMessage;
 import com.cheatbreaker.api.message.StaffModuleStateMessage;
 import com.cheatbreaker.api.object.CBNotification;
 import com.cheatbreaker.api.util.Reflection;
+import com.cheatbreaker.api.waypoint.WaypointManager;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -27,11 +28,15 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
 
     @Getter private static CheatBreakerAPI instance;
 
+    @Getter private WaypointManager waypointManager;
+
     @Override
     public void onEnable() {
         instance = this;
 
         saveDefaultConfig();
+
+        this.waypointManager = new WaypointManager();
 
         Messenger messenger = getServer().getMessenger();
 
@@ -75,7 +80,7 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
         sendMessage(player, new MinimapStatusMessage(status));
     }
 
-    private void sendMessage(Player player, CBMessage message) {
+    public void sendMessage(Player player, CBMessage message) {
         Map<String, Object> data = new HashMap<>();
         data.put("action", message.getAction());
         data.putAll(message.toMap());
