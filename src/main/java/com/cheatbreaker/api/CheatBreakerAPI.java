@@ -1,6 +1,7 @@
 package com.cheatbreaker.api;
 
 import com.cheatbreaker.api.message.CBMessage;
+import com.cheatbreaker.api.message.MinimapStatusMessage;
 import com.cheatbreaker.api.message.SendNotificationMessage;
 
 import com.cheatbreaker.api.message.StaffModuleStateMessage;
@@ -54,6 +55,10 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
 
     public void setStaffModuleState(Player player, StaffModuleStateMessage.StaffModule module, boolean state) {
         sendMessage(player, new StaffModuleStateMessage(module, state));
+    }
+
+    public void setMinimapStatus(Player player, MinimapStatusMessage.MinimapStatus status) {
+        sendMessage(player, new MinimapStatusMessage(status));
     }
 
     public void sendNotificationOrFallback(Player player, CBNotification notification, Runnable fallback) {
