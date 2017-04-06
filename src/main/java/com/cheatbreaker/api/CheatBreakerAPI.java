@@ -3,7 +3,6 @@ package com.cheatbreaker.api;
 import com.cheatbreaker.api.message.CBMessage;
 import com.cheatbreaker.api.message.MinimapStatusMessage;
 import com.cheatbreaker.api.message.SendNotificationMessage;
-
 import com.cheatbreaker.api.message.StaffModuleStateMessage;
 import com.cheatbreaker.api.object.CBNotification;
 import com.cheatbreaker.api.util.Reflection;
@@ -16,6 +15,7 @@ import org.bukkit.plugin.messaging.Messenger;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -41,16 +41,30 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
         });
     }
 
-    public boolean isUsingClient(Player player) {
-        return Reflection.getPropertyMap(player).containsKey("CB-version");
+    public boolean isRunningCheatBreaker(Player player) {
+        Map<String, Collection<Object>> multimap =  Reflection.getPropertyMap(player);
+
+        if (multimap == null) {
+            throw new IllegalStateException("Could not retrieve PropertyMap from " + player.getName() + "'s GameProfile.");
+        }
+
+        return multimap.containsKey("CB-version");
     }
 
-    public void isBanned(UUID playerUuid, Consumer<Boolean> resultListener) {
+    public void isCheatBreakerBanned(UUID playerUuid, Consumer<Boolean> resultListener) {
         resultListener.accept(false);
     }
 
     public void sendNotification(Player player, CBNotification notification) {
         sendMessage(player, new SendNotificationMessage(notification));
+    }
+
+    public void sendNotificationOrFallback(Player player, CBNotification notification, Runnable fallback) {
+        if (isRunningCheatBreaker(player)) {
+            sendNotification(player, notification);
+        } else {
+            fallback.run();
+        }
     }
 
     public void setStaffModuleState(Player player, StaffModuleStateMessage.StaffModule module, boolean state) {
@@ -59,14 +73,6 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
 
     public void setMinimapStatus(Player player, MinimapStatusMessage.MinimapStatus status) {
         sendMessage(player, new MinimapStatusMessage(status));
-    }
-
-    public void sendNotificationOrFallback(Player player, CBNotification notification, Runnable fallback) {
-        if (isUsingClient(player)) {
-            sendNotification(player, notification);
-        } else {
-            fallback.run();
-        }
     }
 
     private void sendMessage(Player player, CBMessage message) {
