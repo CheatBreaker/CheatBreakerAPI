@@ -5,6 +5,7 @@ import com.cheatbreaker.api.message.SendNotificationMessage;
 
 import com.cheatbreaker.api.message.StaffModuleStateMessage;
 import com.cheatbreaker.api.object.CBNotification;
+import com.cheatbreaker.api.util.Reflection;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -40,7 +41,7 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
     }
 
     public boolean isUsingClient(Player player) {
-        return true;
+        return Reflection.getPropertyMap(player).containsKey("CB-version");
     }
 
     public void isBanned(UUID playerUuid, Consumer<Boolean> resultListener) {
