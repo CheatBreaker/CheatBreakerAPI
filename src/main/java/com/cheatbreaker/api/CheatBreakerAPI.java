@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 public final class CheatBreakerAPI extends JavaPlugin implements Listener {
@@ -80,18 +81,20 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
         sendMessage(player, new MinimapStatusMessage(status));
     }
 
-    public static void giveStaffModules(Player player) {
+    public void giveAllStaffModules(Player player) {
         for (StaffModuleStateMessage.StaffModule module : StaffModuleStateMessage.StaffModule.values()) {
-            if (player.hasPermission(module.name().toLowerCase().replace("_", ""))) {
-                CheatBreakerAPI.getInstance().setStaffModuleState(player, module, true);
-            }
+            CheatBreakerAPI.getInstance().setStaffModuleState(player, module, true);
         }
+
+        sendNotification(player, new CBNotification("Staff modules enabled", 3, TimeUnit.SECONDS));
     }
 
-    public static void takeStaffModules(Player player) {
+    public void disableAllStaffModules(Player player) {
         for (StaffModuleStateMessage.StaffModule module : StaffModuleStateMessage.StaffModule.values()) {
             CheatBreakerAPI.getInstance().setStaffModuleState(player, module, false);
         }
+
+        sendNotification(player, new CBNotification("Staff modules disabled", 3, TimeUnit.SECONDS));
     }
 
     public void sendMessage(Player player, CBMessage message) {
