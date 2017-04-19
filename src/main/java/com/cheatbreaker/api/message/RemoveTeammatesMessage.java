@@ -6,14 +6,15 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public class RemoveTeammatesMessage implements CBMessage {
 
-    private final List<String> uuidList = new ArrayList<>();
+    private final List<UUID> uuidList = new ArrayList<>();
 
     public RemoveTeammatesMessage(Iterable<Player> players) {
         for (Player player :  players) {
-            uuidList.add(player.getUniqueId().toString());
+            uuidList.add(player.getUniqueId());
         }
     }
 

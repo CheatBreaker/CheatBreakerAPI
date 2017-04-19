@@ -22,7 +22,11 @@ public class AddWaypointMessage implements CBMessage {
     public Map<String, Object> toMap() {
         return ImmutableMap.of(
                 "name", waypoint.getName(),
-                "xyz", waypoint.getX() + "," + waypoint.getY() + "," + waypoint.getZ(),
+                "location", ImmutableMap.of(
+                        "x", waypoint.getX(),
+                        "y", waypoint.getY(),
+                        "z", waypoint.getZ()
+                ),
                 "dimension", waypoint.getDimension()
         );
     }
