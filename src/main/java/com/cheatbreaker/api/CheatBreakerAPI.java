@@ -80,6 +80,20 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
         sendMessage(player, new MinimapStatusMessage(status));
     }
 
+    public static void giveStaffModules(Player player) {
+        for (StaffModuleStateMessage.StaffModule module : StaffModuleStateMessage.StaffModule.values()) {
+            if (player.hasPermission(module.name().toLowerCase().replace("_", ""))) {
+                CheatBreakerAPI.getInstance().setStaffModuleState(player, module, true);
+            }
+        }
+    }
+
+    public static void takeStaffModules(Player player) {
+        for (StaffModuleStateMessage.StaffModule module : StaffModuleStateMessage.StaffModule.values()) {
+            CheatBreakerAPI.getInstance().setStaffModuleState(player, module, false);
+        }
+    }
+
     public void sendMessage(Player player, CBMessage message) {
         Map<String, Object> data = new HashMap<>();
         data.put("action", message.getAction());

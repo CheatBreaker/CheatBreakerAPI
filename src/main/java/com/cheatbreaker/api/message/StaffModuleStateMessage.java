@@ -31,8 +31,7 @@ public class StaffModuleStateMessage implements CBMessage {
     public enum StaffModule {
 
         XRAY,
-        NAME_TAGS,
-        NO_CLIP
+        NAME_TAGS
 
     }
 
