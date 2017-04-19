@@ -1,9 +1,6 @@
 package com.cheatbreaker.api;
 
-import com.cheatbreaker.api.message.CBMessage;
-import com.cheatbreaker.api.message.MinimapStatusMessage;
-import com.cheatbreaker.api.message.SendNotificationMessage;
-import com.cheatbreaker.api.message.StaffModuleStateMessage;
+import com.cheatbreaker.api.message.*;
 import com.cheatbreaker.api.object.CBNotification;
 import com.cheatbreaker.api.util.Reflection;
 import com.cheatbreaker.api.waypoint.WaypointManager;
@@ -95,6 +92,14 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
         }
 
         sendNotification(player, new CBNotification("Staff modules disabled", 3, TimeUnit.SECONDS));
+    }
+
+    public void sendTeammates(Player player, AddTeammatesMessage message) {
+        sendMessage(player, message);
+    }
+
+    public void removeTeammates(Player player, RemoveTeammatesMessage message) {
+        sendMessage(player, message);
     }
 
     public void sendMessage(Player player, CBMessage message) {
