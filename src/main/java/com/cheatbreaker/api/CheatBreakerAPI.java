@@ -95,6 +95,7 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
     }
 
     public void sendTeammates(Player player, AddTeammatesMessage message) {
+        message.validatePlayers(player);
         sendMessage(player, message);
     }
 

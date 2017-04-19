@@ -1,6 +1,7 @@
 package com.cheatbreaker.api.message;
 
 import com.google.common.collect.ImmutableMap;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -25,6 +26,10 @@ public class AddTeammatesMessage implements CBMessage {
                 "z", player.getLocation().getZ()
         ));
         return this;
+    }
+
+    public void validatePlayers(Player sendingTo) {
+        players.entrySet().removeIf(entry -> Bukkit.getPlayer(entry.getKey()) != null && !Bukkit.getPlayer(entry.getKey()).getWorld().equals(sendingTo.getWorld()));
     }
 
     @Override
