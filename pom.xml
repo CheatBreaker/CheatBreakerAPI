@@ -10,6 +10,9 @@
     <version>1.0</version>
 
     <properties>
+        <minehq.mavenUrl>http://maven.minehq.com:8081/artifactory</minehq.mavenUrl>
+        <minehq.mavenLevel>minehq-low</minehq.mavenLevel>
+        <minehq.pluginAuthor>MineHQ Development Team</minehq.pluginAuthor>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -19,6 +22,17 @@
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
     </repositories>
+
+    <distributionManagement>
+        <repository>
+            <id>minehq-repo</id>
+            <url>${minehq.mavenUrl}/${minehq.mavenLevel}</url>
+        </repository>
+        <snapshotRepository>
+            <id>minehq-repo</id>
+            <url>${minehq.mavenUrl}/${minehq.mavenLevel}</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <build>
         <finalName>${project.artifactId}</finalName>
