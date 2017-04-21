@@ -39,11 +39,13 @@ public class AddTeammatesMessage implements CBMessage {
 
     @Override
     public Map<String, Object> toMap() {
-        return ImmutableMap.of(
-                "uuid-list", players,
-                "leader", leader,
-                "lastMs", lastMs
-        );
+        Map<String, Object> map = new HashMap<>();
+
+        map.put("uuid-list", players);
+        map.put("leader", leader);
+        map.put("lastMs", lastMs);
+
+        return map;
     }
 
 }
