@@ -8,18 +8,18 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class AddTeammatesMessage implements CBMessage {
+public class TeammatesMessage implements CBMessage {
 
     private final Map<UUID, Map<String, Double>> players = new HashMap<>(); // uuid string -> location
     private final UUID leader; // can be null (leader is shown as blue while other teammates are green)
     private final long lastMs; // how long this should last on the player's screen
 
-    public AddTeammatesMessage(Player leader, long lastMs) {
+    public TeammatesMessage(Player leader, long lastMs) {
         this.leader = leader == null ? null : leader.getUniqueId();
         this.lastMs = lastMs;
     }
 
-    public AddTeammatesMessage addPlayer(Player player) {
+    public TeammatesMessage addPlayer(Player player) {
         players.put(player.getUniqueId(), ImmutableMap.of(
                 "x", player.getLocation().getX(),
                 "y", player.getLocation().getY(),
@@ -34,7 +34,7 @@ public class AddTeammatesMessage implements CBMessage {
 
     @Override
     public String getAction() {
-        return "addteammates";
+        return "teammates";
     }
 
     @Override

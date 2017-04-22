@@ -94,7 +94,7 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
         sendNotification(player, new CBNotification("Staff modules disabled", 3, TimeUnit.SECONDS));
     }
 
-    public void sendTeammates(Player player, AddTeammatesMessage message) {
+    public void sendTeammates(Player player, TeammatesMessage message) {
         message.validatePlayers(player);
         sendMessage(player, message);
     }
