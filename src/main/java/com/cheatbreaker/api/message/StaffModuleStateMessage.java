@@ -17,7 +17,7 @@ public class StaffModuleStateMessage implements CBMessage {
 
     @Override
     public String getAction() {
-        return "modulestate";
+        return "StaffPermission";
     }
 
     @Override

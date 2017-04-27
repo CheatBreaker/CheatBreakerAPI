@@ -15,18 +15,16 @@ public class AddWaypointMessage implements CBMessage {
 
     @Override
     public String getAction() {
-        return "addwaypoint";
+        return "AddWaypoint";
     }
 
     @Override
     public Map<String, Object> toMap() {
         return ImmutableMap.of(
                 "name", waypoint.getName(),
-                "location", ImmutableMap.of(
-                        "x", waypoint.getX(),
-                        "y", waypoint.getY(),
-                        "z", waypoint.getZ()
-                ),
+                "posX", waypoint.getX(),
+                "posY", waypoint.getY(),
+                "posZ", waypoint.getZ(),
                 "dimension", waypoint.getDimension()
         );
     }

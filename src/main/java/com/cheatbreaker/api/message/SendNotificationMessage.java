@@ -16,7 +16,7 @@ public final class SendNotificationMessage implements CBMessage {
 
     @Override
     public String getAction() {
-        return "notification";
+        return "Notification";
     }
 
     @Override

@@ -16,7 +16,7 @@ public final class SendCooldownMessage implements CBMessage {
 
     @Override
     public String getAction() {
-        return "cooldown";
+        return "Cooldown";
     }
 
     @Override

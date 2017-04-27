@@ -14,7 +14,7 @@ public class MinimapStatusMessage implements CBMessage {
 
     @Override
     public String getAction() {
-        return "minimapstatus";
+        return "MinimapStatus";
     }
 
     @Override

@@ -15,7 +15,7 @@ public class RemoveWaypointMessage implements CBMessage {
 
     @Override
     public String getAction() {
-        return "removewaypoint";
+        return "DeleteWaypoint";
     }
 
     @Override

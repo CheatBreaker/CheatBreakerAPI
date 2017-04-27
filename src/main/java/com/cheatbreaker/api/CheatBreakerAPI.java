@@ -10,9 +10,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.Messenger;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,8 +18,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 public final class CheatBreakerAPI extends JavaPlugin implements Listener {
-
-    private static final String PLUGIN_MESSAGE_CHANNEL = "MC_CLIENT";
 
     @Getter private static CheatBreakerAPI instance;
 
@@ -38,8 +33,8 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
 
         Messenger messenger = getServer().getMessenger();
 
-        messenger.registerOutgoingPluginChannel(this, PLUGIN_MESSAGE_CHANNEL);
-        messenger.registerIncomingPluginChannel(this, PLUGIN_MESSAGE_CHANNEL, (channel, player, bytes) -> {
+        messenger.registerOutgoingPluginChannel(this, "CB-Client");
+        messenger.registerIncomingPluginChannel(this, "CB-Client", (channel, player, bytes) -> {
 
         });
     }
@@ -99,29 +94,29 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
         sendMessage(player, message);
     }
 
-    public void removeTeammates(Player player, RemoveTeammatesMessage message) {
-        sendMessage(player, message);
-    }
-
     public void sendMessage(Player player, CBMessage message) {
-        Map<String, Object> data = new HashMap<>();
+        Map<Object, Object> data = new HashMap<>();
         data.put("action", message.getAction());
         data.putAll(message.toMap());
 
-        byte[] bytes;
+        player.sendPluginMessage(this, "CB-Client", toJson(data).getBytes());
+    }
 
-        try {
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            new ObjectOutputStream(out).writeObject(data);
+    @SuppressWarnings("unchecked")
+    private String toJson(Map<Object, Object> map) {
+        String json = "";
 
-            bytes = out.toByteArray();
-        } catch (IOException ex) {
-            // just rethrow whatever we catch, we should never
-            // run into an IOException while writing to a byte array
-            throw new RuntimeException(ex);
+        for (Map.Entry<Object, Object> entry : map.entrySet()) {
+            if (json.length() != 0) json += ",";
+
+            if (entry.getValue() instanceof Map) {
+                json += entry.getKey() + ":" + toJson((Map) entry.getValue());
+            } else {
+                json += entry.getKey() + ":\"" + entry.getValue() + "\"";
+            }
         }
 
-        player.sendPluginMessage(this, PLUGIN_MESSAGE_CHANNEL, bytes);
+        return "{" + json + "}";
     }
 
 }
