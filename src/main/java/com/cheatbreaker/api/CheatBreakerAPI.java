@@ -128,11 +128,13 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
     }
 
     public void sendMessage(Player player, CBMessage message) {
-        Map<Object, Object> data = new HashMap<>();
-        data.put("action", message.getAction());
-        data.putAll(message.toMap());
+        if (isRunningCheatBreaker(player)) {
+            Map<Object, Object> data = new HashMap<>();
+            data.put("action", message.getAction());
+            data.putAll(message.toMap());
 
-        player.sendPluginMessage(this, MESSAGE_CHANNEL, toJson(data).getBytes());
+            player.sendPluginMessage(this, MESSAGE_CHANNEL, toJson(data).getBytes());
+        }
     }
 
     @SuppressWarnings("unchecked")
