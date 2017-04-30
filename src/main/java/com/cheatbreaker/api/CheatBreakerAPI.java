@@ -2,7 +2,6 @@ package com.cheatbreaker.api;
 
 import com.cheatbreaker.api.message.*;
 import com.cheatbreaker.api.object.CBNotification;
-import com.cheatbreaker.api.util.Reflection;
 import com.cheatbreaker.api.waypoint.WaypointManager;
 import lombok.Getter;
 import org.bukkit.entity.Player;
@@ -10,7 +9,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.Messenger;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -18,6 +16,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 public final class CheatBreakerAPI extends JavaPlugin implements Listener {
+
+    private static final String MESSAGE_CHANNEL = "CB-Client";
 
     @Getter private static CheatBreakerAPI instance;
 
@@ -33,20 +33,14 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
 
         Messenger messenger = getServer().getMessenger();
 
-        messenger.registerOutgoingPluginChannel(this, "CB-Client");
-        messenger.registerIncomingPluginChannel(this, "CB-Client", (channel, player, bytes) -> {
+        messenger.registerOutgoingPluginChannel(this, MESSAGE_CHANNEL);
+        messenger.registerIncomingPluginChannel(this, MESSAGE_CHANNEL, (channel, player, bytes) -> {
 
         });
     }
 
     public boolean isRunningCheatBreaker(Player player) {
-        Map<String, Collection<Object>> multimap =  Reflection.getPropertyMap(player);
-
-        if (multimap == null) {
-            throw new IllegalStateException("Could not retrieve PropertyMap from " + player.getName() + "'s GameProfile.");
-        }
-
-        return multimap.containsKey("CB-version");
+        return player.getListeningPluginChannels().contains(MESSAGE_CHANNEL);
     }
 
     public void isCheatBreakerBanned(UUID playerUuid, Consumer<Boolean> resultListener) {
@@ -99,7 +93,7 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
         data.put("action", message.getAction());
         data.putAll(message.toMap());
 
-        player.sendPluginMessage(this, "CB-Client", toJson(data).getBytes());
+        player.sendPluginMessage(this, MESSAGE_CHANNEL, toJson(data).getBytes());
     }
 
     @SuppressWarnings("unchecked")
