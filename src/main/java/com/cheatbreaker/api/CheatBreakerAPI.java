@@ -127,14 +127,22 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
         sendMessage(player, message);
     }
 
-    public void sendMessage(Player player, CBMessage message) {
+    /*
+    *  This is a boolean to indicate whether or not a CB message was sent.
+    *  An example use-case is when you want to send a CheatBreaker
+    *  notification if a player is running CheatBreaker, and a chat
+    *  message if not.
+    */
+    public boolean sendMessage(Player player, CBMessage message) {
         if (isRunningCheatBreaker(player)) {
             Map<Object, Object> data = new HashMap<>();
             data.put("action", message.getAction());
             data.putAll(message.toMap());
 
             player.sendPluginMessage(this, MESSAGE_CHANNEL, toJson(data).getBytes());
+            return true;
         }
+        return false;
     }
 
     @SuppressWarnings("unchecked")
