@@ -1,5 +1,7 @@
 package com.cheatbreaker.api;
 
+import com.cheatbreaker.api.event.PlayerRegisterCBEvent;
+import com.cheatbreaker.api.event.PlayerUnregisterCBEvent;
 import com.cheatbreaker.api.message.*;
 import com.cheatbreaker.api.object.CBNotification;
 import com.cheatbreaker.api.waypoint.WaypointManager;
@@ -51,6 +53,7 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
                     public void onRegister(PlayerRegisterChannelEvent event) {
                         if (event.getChannel().equals(MESSAGE_CHANNEL)) {
                             playersRunningCheatBreaker.add(event.getPlayer().getUniqueId());
+                            getServer().getPluginManager().callEvent(new PlayerRegisterCBEvent(event.getPlayer()));
                         }
                     }
 
@@ -58,6 +61,7 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
                     public void onUnregister(PlayerUnregisterChannelEvent event) {
                         if (event.getChannel().equals(MESSAGE_CHANNEL)) {
                             playersRunningCheatBreaker.remove(event.getPlayer().getUniqueId());
+                            getServer().getPluginManager().callEvent(new PlayerUnregisterCBEvent(event.getPlayer()));
                         }
                     }
 
