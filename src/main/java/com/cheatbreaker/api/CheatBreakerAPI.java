@@ -27,7 +27,7 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
     private static final String MESSAGE_CHANNEL = "CB-Client";
 
     @Getter private static CheatBreakerAPI instance;
-    private final Set<UUID> playersRunningCheatBreaker = new HashSet<>();
+    private final Set<UUID> playersRunningCheatBreaker = com.google.common.collect.Sets.newSetFromMap(com.google.common.collect.Maps.newConcurrentMap());
 
     @Getter private WaypointManager waypointManager;
 
