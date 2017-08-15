@@ -1,12 +1,14 @@
 node {
-  stage 'Git Clone'
-  checkout scm
-  stage 'Maven Compile'
-  if (env.BRANCH_NAME == 'master') {
-    sh 'mvn clean deploy -U'
-  } else {
-    sh 'mvn clean package -U'
-  }
-  stage 'Jenkins Archive'
-  step([$class: 'ArtifactArchiver', artifacts: 'target/*.jar', fingerprint: true])
+   stage('Clone') {
+      checkout scm
+   }
+   
+   stage('Build') {
+       def verb = env.BRANCH_NAME == 'master' ? 'deploy' : 'package'
+       sh "${tool 'M3'}/bin/mvn clean ${verb} -U"
+   }
+   
+   stage('Archive') {
+      archive 'target/*.jar'
+   }
 }
