@@ -16,6 +16,7 @@ import org.bukkit.event.player.PlayerRegisterChannelEvent;
 import org.bukkit.event.player.PlayerUnregisterChannelEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.Messenger;
+import org.bukkit.util.Vector;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -129,6 +130,18 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
     public void sendTeammates(Player player, TeammatesMessage message) {
         message.validatePlayers(player);
         sendMessage(player, message);
+    }
+
+    public void addHologram(Player player, UUID id, Vector position, String[] lines) {
+        sendMessage(player, new HologramAddMessage(id, position.getX(), position.getY(), position.getZ(), lines));
+    }
+
+    public void updateHologram(Player player, UUID id, String[] lines) {
+        sendMessage(player, new HologramUpdateMessage(id, lines));
+    }
+
+    public void removeHologram(Player player, UUID id) {
+        sendMessage(player, new HologramRemoveMessage(id));
     }
 
     /*
