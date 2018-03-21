@@ -6,6 +6,8 @@ import com.cheatbreaker.api.message.*;
 import com.cheatbreaker.api.object.CBNotification;
 import com.cheatbreaker.api.waypoint.WaypointManager;
 import com.google.common.collect.ImmutableSet;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
@@ -27,6 +29,7 @@ import java.util.stream.Collectors;
 public final class CheatBreakerAPI extends JavaPlugin implements Listener {
 
     private static final String MESSAGE_CHANNEL = "CB-Client";
+    private static final Gson GSON = new GsonBuilder().serializeNulls().create();
 
     @Getter private static CheatBreakerAPI instance;
     private final Set<UUID> playersRunningCheatBreaker = new HashSet<>();
@@ -177,19 +180,7 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
 
     @SuppressWarnings("unchecked")
     private String toJson(Map<Object, Object> map) {
-        String json = "";
-
-        for (Map.Entry<Object, Object> entry : map.entrySet()) {
-            if (json.length() != 0) json += ",";
-
-            if (entry.getValue() instanceof Map) {
-                json += entry.getKey() + ":" + toJson((Map) entry.getValue());
-            } else {
-                json += entry.getKey() + ":\"" + entry.getValue() + "\"";
-            }
-        }
-
-        return "{" + json + "}";
+        return GSON.toJson(map);
     }
 
 }
