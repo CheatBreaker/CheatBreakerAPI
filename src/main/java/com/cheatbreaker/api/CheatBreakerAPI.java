@@ -134,11 +134,11 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
     }
 
     public void addHologram(Player player, UUID id, Vector position, String[] lines) {
-        sendMessage(player, new HologramAddMessage(id, position.getX(), position.getY(), position.getZ(), lines));
+        sendMessage(player, new HologramAddMessage(id, position.getX(), position.getY(), position.getZ(), Arrays.asList(lines)));
     }
 
     public void updateHologram(Player player, UUID id, String[] lines) {
-        sendMessage(player, new HologramUpdateMessage(id, lines));
+        sendMessage(player, new HologramUpdateMessage(id, Arrays.asList(lines)));
     }
 
     public void removeHologram(Player player, UUID id) {

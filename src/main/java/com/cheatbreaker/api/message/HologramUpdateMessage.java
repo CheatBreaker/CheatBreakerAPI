@@ -3,6 +3,7 @@ package com.cheatbreaker.api.message;
 import com.google.common.collect.ImmutableMap;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -10,7 +11,7 @@ import java.util.UUID;
 public final class HologramUpdateMessage implements CBMessage {
 
     private final UUID id;
-    private final String[] lines;
+    private final List<String> lines;
 
     @Override
     public String getAction() {
