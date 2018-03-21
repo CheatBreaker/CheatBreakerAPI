@@ -8,6 +8,7 @@ import com.cheatbreaker.api.waypoint.WaypointManager;
 import com.google.common.collect.ImmutableSet;
 import lombok.Getter;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -142,6 +143,18 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
 
     public void removeHologram(Player player, UUID id) {
         sendMessage(player, new HologramRemoveMessage(id));
+    }
+
+    public void overrideNametag(LivingEntity target, String nametag, Player viewer) {
+        sendMessage(viewer, new OverrideNametagMessage(target, nametag));
+    }
+
+    public void resetNametag(LivingEntity target, Player viewer) {
+        sendMessage(viewer, new OverrideNametagMessage(target, null));
+    }
+
+    public void hideNametag(LivingEntity target, Player viewer) {
+        sendMessage(viewer, new OverrideNametagMessage(target, ""));
     }
 
     /*

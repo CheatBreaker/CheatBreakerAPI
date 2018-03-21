@@ -9,6 +9,6 @@ node {
    }
    
    stage('Archive') {
-      archive 'target/*.jar'
+      archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
    }
 }

@@ -10,8 +10,6 @@
     <version>1.0</version>
 
     <properties>
-        <minehq.mavenUrl>http://maven.minehq.com:8081/artifactory</minehq.mavenUrl>
-        <minehq.mavenLevel>minehq-low</minehq.mavenLevel>
         <minehq.pluginAuthor>MineHQ Development Team</minehq.pluginAuthor>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -25,12 +23,12 @@
 
     <distributionManagement>
         <repository>
-            <id>minehq-repo</id>
-            <url>${minehq.mavenUrl}/${minehq.mavenLevel}</url>
+            <id>frozenorb-repo</id>
+            <url>http://repo.frozenorb.net/repository/maven-standard/</url>
         </repository>
         <snapshotRepository>
-            <id>minehq-repo</id>
-            <url>${minehq.mavenUrl}/${minehq.mavenLevel}</url>
+            <id>frozenorb-repo</id>
+            <url>http://repo.frozenorb.net/repository/maven-standard/</url>
         </snapshotRepository>
     </distributionManagement>
 
