@@ -6,6 +6,8 @@ import com.cheatbreaker.api.message.*;
 import com.cheatbreaker.api.object.CBNotification;
 import com.cheatbreaker.api.waypoint.WaypointManager;
 import com.google.common.collect.ImmutableSet;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
@@ -17,6 +19,7 @@ import org.bukkit.event.player.PlayerRegisterChannelEvent;
 import org.bukkit.event.player.PlayerUnregisterChannelEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.Messenger;
+import org.bukkit.util.Vector;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -26,6 +29,7 @@ import java.util.stream.Collectors;
 public final class CheatBreakerAPI extends JavaPlugin implements Listener {
 
     private static final String MESSAGE_CHANNEL = "CB-Client";
+    private static final Gson GSON = new GsonBuilder().serializeNulls().create();
 
     @Getter private static CheatBreakerAPI instance;
     private final Set<UUID> playersRunningCheatBreaker = new HashSet<>();
@@ -132,6 +136,18 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
         sendMessage(player, message);
     }
 
+    public void addHologram(Player player, UUID id, Vector position, String[] lines) {
+        sendMessage(player, new HologramAddMessage(id, position.getX(), position.getY(), position.getZ(), Arrays.asList(lines)));
+    }
+
+    public void updateHologram(Player player, UUID id, String[] lines) {
+        sendMessage(player, new HologramUpdateMessage(id, Arrays.asList(lines)));
+    }
+
+    public void removeHologram(Player player, UUID id) {
+        sendMessage(player, new HologramRemoveMessage(id));
+    }
+
     public void overrideNametag(LivingEntity target, String nametag, Player viewer) {
         sendMessage(viewer, new OverrideNametagMessage(target, nametag));
     }
@@ -164,19 +180,7 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
 
     @SuppressWarnings("unchecked")
     private String toJson(Map<Object, Object> map) {
-        String json = "";
-
-        for (Map.Entry<Object, Object> entry : map.entrySet()) {
-            if (json.length() != 0) json += ",";
-
-            if (entry.getValue() instanceof Map) {
-                json += entry.getKey() + ":" + toJson((Map) entry.getValue());
-            } else {
-                json += entry.getKey() + ":\"" + entry.getValue() + "\"";
-            }
-        }
-
-        return "{" + json + "}";
+        return GSON.toJson(map);
     }
 
 }
