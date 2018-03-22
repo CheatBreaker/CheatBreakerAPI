@@ -24,11 +24,11 @@
     <distributionManagement>
         <repository>
             <id>frozenorb-repo</id>
-            <url>http://repo.frozenorb.net/repository/maven-standard/</url>
+            <url>https://repo.frozenorb.net/repository/maven-releases/</url>
         </repository>
         <snapshotRepository>
             <id>frozenorb-repo</id>
-            <url>http://repo.frozenorb.net/repository/maven-standard/</url>
+            <url>https://repo.frozenorb.net/repository/maven-snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
 
