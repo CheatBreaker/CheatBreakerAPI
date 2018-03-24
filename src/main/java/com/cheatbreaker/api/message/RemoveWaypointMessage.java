@@ -1,29 +1,19 @@
 package com.cheatbreaker.api.message;
 
 import com.cheatbreaker.api.object.CBWaypoint;
-import com.google.common.collect.ImmutableMap;
+import lombok.Getter;
 
-import java.util.Map;
+@Getter
+public final class RemoveWaypointMessage extends CBMessage {
 
-public class RemoveWaypointMessage implements CBMessage {
-
-    private final CBWaypoint waypoint;
+    private final String name;
+    private final int dimension;
 
     public RemoveWaypointMessage(CBWaypoint waypoint) {
-        this.waypoint = waypoint;
-    }
+        super("DeleteWaypoint");
 
-    @Override
-    public String getAction() {
-        return "DeleteWaypoint";
-    }
-
-    @Override
-    public Map<String, Object> toMap() {
-        return ImmutableMap.of(
-                "name", waypoint.getName(),
-                "dimension", waypoint.getDimension()
-        );
+        this.name = waypoint.getName();
+        this.dimension = waypoint.getDimension();
     }
 
 }

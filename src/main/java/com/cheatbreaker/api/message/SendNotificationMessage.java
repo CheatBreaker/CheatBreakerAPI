@@ -1,31 +1,21 @@
 package com.cheatbreaker.api.message;
 
 import com.cheatbreaker.api.object.CBNotification;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableMap;
+import lombok.Getter;
 
-import java.util.Map;
+@Getter
+public final class SendNotificationMessage extends CBMessage {
 
-public final class SendNotificationMessage implements CBMessage {
-
-    private final CBNotification notification;
+    private final String message;
+    private final long durationMs;
+    private final String level;
 
     public SendNotificationMessage(CBNotification notification) {
-        this.notification = Preconditions.checkNotNull(notification, "notification");
-    }
+        super("Notification");
 
-    @Override
-    public String getAction() {
-        return "Notification";
-    }
-
-    @Override
-    public Map<String, Object> toMap() {
-        return ImmutableMap.of(
-            "message", notification.getMessage(),
-            "durationMs", notification.getDurationMs(),
-            "level", notification.getLevel().name()
-        );
+        this.message = notification.getMessage();
+        this.durationMs = notification.getDurationMs();
+        this.level = notification.getLevel().name();
     }
 
 }

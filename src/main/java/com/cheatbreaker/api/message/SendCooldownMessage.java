@@ -3,29 +3,23 @@ package com.cheatbreaker.api.message;
 import com.cheatbreaker.api.object.CBCooldown;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
+import lombok.Getter;
 
 import java.util.Map;
 
-public final class SendCooldownMessage implements CBMessage {
+@Getter
+public final class SendCooldownMessage extends CBMessage {
 
-    private final CBCooldown cooldown;
+    private final String message;
+    private final long durationMs;
+    private final int icon;
 
     public SendCooldownMessage(CBCooldown cooldown) {
-        this.cooldown = Preconditions.checkNotNull(cooldown, "cooldown");
-    }
+        super("Cooldown");
 
-    @Override
-    public String getAction() {
-        return "Cooldown";
-    }
-
-    @Override
-    public Map<String, Object> toMap() {
-        return ImmutableMap.of(
-            "message", cooldown.getMessage(),
-            "durationMs", cooldown.getDurationMs(),
-            "icon", cooldown.getIcon().getId()
-        );
+        this.message = cooldown.getMessage();
+        this.durationMs = cooldown.getDurationMs();
+        this.icon = cooldown.getIcon().getId();
     }
 
 }

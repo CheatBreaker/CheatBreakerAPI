@@ -1,31 +1,18 @@
 package com.cheatbreaker.api.message;
 
-import com.google.common.collect.ImmutableMap;
 import lombok.Getter;
 
-import java.util.Map;
+@Getter
+public final class StaffModuleStateMessage extends CBMessage {
 
-public class StaffModuleStateMessage implements CBMessage {
-
-    @Getter private final StaffModule module;
-    @Getter private final boolean state;
+    private final String name;
+    private final boolean state;
 
     public StaffModuleStateMessage(StaffModule module, boolean state) {
-        this.module = module;
+        super("StaffPermission");
+
+        this.name = module.name().toLowerCase().replace("_", "");
         this.state = state;
-    }
-
-    @Override
-    public String getAction() {
-        return "StaffPermission";
-    }
-
-    @Override
-    public Map<String, Object> toMap() {
-        return ImmutableMap.of(
-            "name", module.name().toLowerCase().replace("_", ""),
-            "state", state
-        );
     }
 
     public enum StaffModule {

@@ -1,33 +1,26 @@
 package com.cheatbreaker.api.message;
 
-import com.google.common.collect.ImmutableMap;
-import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
-@AllArgsConstructor
-public final class HologramAddMessage implements CBMessage {
+@Getter
+public final class HologramAddMessage extends CBMessage {
 
     private final UUID id;
     private final double x, y, z;
     private final List<String> lines;
 
-    @Override
-    public String getAction() {
-        return "AddHologram";
-    }
+    public HologramAddMessage(UUID id, double x, double y, double z, List<String> lines) {
+        super("AddHologram");
 
-    @Override
-    public Map<String, Object> toMap() {
-        return ImmutableMap.of(
-                "id", id,
-                "x", x,
-                "y", y,
-                "z", z,
-                "lines", lines
-        );
+        this.id = id;
+        this.x = x;
+        this.y = y;
+        this.z = z;
+
+        this.lines = lines;
     }
 
 }

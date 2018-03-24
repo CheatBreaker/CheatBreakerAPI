@@ -1,19 +1,15 @@
 package com.cheatbreaker.api.message;
 
-import java.util.Map;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 
-public interface CBMessage {
+@AllArgsConstructor(access = AccessLevel.PACKAGE)
+public abstract class CBMessage {
 
-    /**
-     * Messages have actions.
-     * The client knows what to do with the data in {@link #toMap()}
-     * because of the action provided.
-     */
-    String getAction();
+    private final String action;
 
-    /**
-     * The data contained in this Message. Will be sent to the Client.
-     */
-    Map<String, Object> toMap();
+    public final String getAction() {
+        return action;
+    }
 
 }

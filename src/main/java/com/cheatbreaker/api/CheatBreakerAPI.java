@@ -4,7 +4,8 @@ import com.cheatbreaker.api.event.PlayerRegisterCBEvent;
 import com.cheatbreaker.api.event.PlayerUnregisterCBEvent;
 import com.cheatbreaker.api.message.*;
 import com.cheatbreaker.api.object.CBNotification;
-import com.cheatbreaker.api.waypoint.WaypointManager;
+import com.google.common.base.Charsets;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -34,15 +35,11 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
     @Getter private static CheatBreakerAPI instance;
     private final Set<UUID> playersRunningCheatBreaker = new HashSet<>();
 
-    @Getter private WaypointManager waypointManager;
-
     @Override
     public void onEnable() {
         instance = this;
 
         saveDefaultConfig();
-
-        this.waypointManager = new WaypointManager();
 
         Messenger messenger = getServer().getMessenger();
 
@@ -148,7 +145,7 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
         sendMessage(player, new HologramRemoveMessage(id));
     }
 
-    public void overrideNametag(LivingEntity target, String nametag, Player viewer) {
+    public void overrideNametag(LivingEntity target, List<String> nametag, Player viewer) {
         sendMessage(viewer, new OverrideNametagMessage(target, nametag));
     }
 
@@ -157,7 +154,7 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
     }
 
     public void hideNametag(LivingEntity target, Player viewer) {
-        sendMessage(viewer, new OverrideNametagMessage(target, ""));
+        sendMessage(viewer, new OverrideNametagMessage(target, ImmutableList.of()));
     }
 
     /*
@@ -168,19 +165,14 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
     */
     public boolean sendMessage(Player player, CBMessage message) {
         if (isRunningCheatBreaker(player)) {
-            Map<Object, Object> data = new HashMap<>();
-            data.put("action", message.getAction());
-            data.putAll(message.toMap());
+            String json = GSON.toJson(message);
 
-            player.sendPluginMessage(this, MESSAGE_CHANNEL, toJson(data).getBytes());
+            System.out.println(json);
+
+            player.sendPluginMessage(this, MESSAGE_CHANNEL, json.getBytes(Charsets.UTF_8));
             return true;
         }
         return false;
-    }
-
-    @SuppressWarnings("unchecked")
-    private String toJson(Map<Object, Object> map) {
-        return GSON.toJson(map);
     }
 
 }
