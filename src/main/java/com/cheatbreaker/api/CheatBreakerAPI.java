@@ -22,6 +22,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.Messenger;
 import org.bukkit.util.Vector;
 
+import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -157,6 +158,14 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
         sendMessage(viewer, new OverrideNametagMessage(target, ImmutableList.of()));
     }
 
+    public void sendTitle(Player player, TitleMessage.Type type, String message, Duration displayTime) {
+        sendTitle(player, type, message, Duration.ofMillis(500), displayTime, Duration.ofMillis(500));
+    }
+
+    public void sendTitle(Player player, TitleMessage.Type type, String message, Duration fadeInTime, Duration displayTime, Duration fadeOutTime) {
+         sendMessage(player, new TitleMessage(type, message, fadeInTime, displayTime, fadeOutTime));
+    }
+
     /*
     *  This is a boolean to indicate whether or not a CB message was sent.
     *  An example use-case is when you want to send a CheatBreaker
@@ -165,11 +174,7 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
     */
     public boolean sendMessage(Player player, CBMessage message) {
         if (isRunningCheatBreaker(player)) {
-            String json = GSON.toJson(message);
-
-            System.out.println(json);
-
-            player.sendPluginMessage(this, MESSAGE_CHANNEL, json.getBytes(Charsets.UTF_8));
+            player.sendPluginMessage(this, MESSAGE_CHANNEL, GSON.toJson(message).getBytes(Charsets.UTF_8));
             return true;
         }
         return false;
