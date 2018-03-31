@@ -2,8 +2,12 @@ package com.cheatbreaker.api;
 
 import com.cheatbreaker.api.event.PlayerRegisterCBEvent;
 import com.cheatbreaker.api.event.PlayerUnregisterCBEvent;
-import com.cheatbreaker.api.message.*;
 import com.cheatbreaker.api.object.CBNotification;
+import com.cheatbreaker.api.object.MinimapStatus;
+import com.cheatbreaker.api.object.StaffModule;
+import com.cheatbreaker.api.object.TitleType;
+import com.cheatbreaker.nethandler.CBPacket;
+import com.cheatbreaker.nethandler.server.*;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -36,6 +40,8 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
     @Getter private static CheatBreakerAPI instance;
     private final Set<UUID> playersRunningCheatBreaker = new HashSet<>();
 
+    private final CBNetHandler netHandlerServer = new CBNetHandler();
+
     @Override
     public void onEnable() {
         instance = this;
@@ -45,9 +51,7 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
         Messenger messenger = getServer().getMessenger();
 
         messenger.registerOutgoingPluginChannel(this, MESSAGE_CHANNEL);
-        messenger.registerIncomingPluginChannel(this, MESSAGE_CHANNEL, (channel, player, bytes) -> {
-
-        });
+        messenger.registerIncomingPluginChannel(this, MESSAGE_CHANNEL, (channel, player, bytes) -> CBPacket.handle(netHandlerServer, bytes));
 
         getServer().getPluginManager().registerEvents(
                 new Listener() {
@@ -94,7 +98,11 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
     }
 
     public void sendNotification(Player player, CBNotification notification) {
-        sendMessage(player, new SendNotificationMessage(notification));
+        sendMessage(player, new CBPacketNotification(
+                notification.getMessage(),
+                notification.getDurationMs(),
+                notification.getLevel().name()
+        ));
     }
 
     public void sendNotificationOrFallback(Player player, CBNotification notification, Runnable fallback) {
@@ -105,16 +113,16 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
         }
     }
 
-    public void setStaffModuleState(Player player, StaffModuleStateMessage.StaffModule module, boolean state) {
-        sendMessage(player, new StaffModuleStateMessage(module, state));
+    public void setStaffModuleState(Player player, StaffModule module, boolean state) {
+        sendMessage(player, new CBPacketStaffModState(module.name(), state));
     }
 
-    public void setMinimapStatus(Player player, MinimapStatusMessage.MinimapStatus status) {
-        sendMessage(player, new MinimapStatusMessage(status));
+    public void setMinimapStatus(Player player, MinimapStatus status) {
+        sendMessage(player, new CBPacketMinimapStatus(status.name()));
     }
 
     public void giveAllStaffModules(Player player) {
-        for (StaffModuleStateMessage.StaffModule module : StaffModuleStateMessage.StaffModule.values()) {
+        for (StaffModule module : StaffModule.values()) {
             CheatBreakerAPI.getInstance().setStaffModuleState(player, module, true);
         }
 
@@ -122,48 +130,52 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
     }
 
     public void disableAllStaffModules(Player player) {
-        for (StaffModuleStateMessage.StaffModule module : StaffModuleStateMessage.StaffModule.values()) {
+        for (StaffModule module : StaffModule.values()) {
             CheatBreakerAPI.getInstance().setStaffModuleState(player, module, false);
         }
 
         sendNotification(player, new CBNotification("Staff modules disabled", 3, TimeUnit.SECONDS));
     }
 
-    public void sendTeammates(Player player, TeammatesMessage message) {
-        message.validatePlayers(player);
-        sendMessage(player, message);
+    public void sendTeammates(Player player, CBPacketTeammates packet) {
+        validatePlayers(player, packet);
+        sendMessage(player, packet);
+    }
+
+    public void validatePlayers(Player sendingTo, CBPacketTeammates packet) {
+        packet.getPlayers().entrySet().removeIf(entry -> Bukkit.getPlayer(entry.getKey()) != null && !Bukkit.getPlayer(entry.getKey()).getWorld().equals(sendingTo.getWorld()));
     }
 
     public void addHologram(Player player, UUID id, Vector position, String[] lines) {
-        sendMessage(player, new HologramAddMessage(id, position.getX(), position.getY(), position.getZ(), Arrays.asList(lines)));
+        sendMessage(player, new CBPacketAddHologram(id, position.getX(), position.getY(), position.getZ(), Arrays.asList(lines)));
     }
 
     public void updateHologram(Player player, UUID id, String[] lines) {
-        sendMessage(player, new HologramUpdateMessage(id, Arrays.asList(lines)));
+        sendMessage(player, new CBPacketUpdateHologram(id, Arrays.asList(lines)));
     }
 
     public void removeHologram(Player player, UUID id) {
-        sendMessage(player, new HologramRemoveMessage(id));
+        sendMessage(player, new CBPacketRemoveHologram(id));
     }
 
     public void overrideNametag(LivingEntity target, List<String> nametag, Player viewer) {
-        sendMessage(viewer, new OverrideNametagMessage(target, nametag));
+        sendMessage(viewer, new CBPacketOverrideNametags(target.getEntityId(), nametag));
     }
 
     public void resetNametag(LivingEntity target, Player viewer) {
-        sendMessage(viewer, new OverrideNametagMessage(target, null));
+        sendMessage(viewer, new CBPacketOverrideNametags(target.getEntityId(), null));
     }
 
     public void hideNametag(LivingEntity target, Player viewer) {
-        sendMessage(viewer, new OverrideNametagMessage(target, ImmutableList.of()));
+        sendMessage(viewer, new CBPacketOverrideNametags(target.getEntityId(), ImmutableList.of()));
     }
 
-    public void sendTitle(Player player, TitleMessage.Type type, String message, Duration displayTime) {
+    public void sendTitle(Player player, TitleType type, String message, Duration displayTime) {
         sendTitle(player, type, message, Duration.ofMillis(500), displayTime, Duration.ofMillis(500));
     }
 
-    public void sendTitle(Player player, TitleMessage.Type type, String message, Duration fadeInTime, Duration displayTime, Duration fadeOutTime) {
-         sendMessage(player, new TitleMessage(type, message, fadeInTime, displayTime, fadeOutTime));
+    public void sendTitle(Player player, TitleType type, String message, Duration fadeInTime, Duration displayTime, Duration fadeOutTime) {
+         sendMessage(player, new CBPacketTitle(type.name().toLowerCase(), message, fadeInTime.toMillis(), displayTime.toMillis(), fadeOutTime.toMillis()));
     }
 
     /*
@@ -172,9 +184,9 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
     *  notification if a player is running CheatBreaker, and a chat
     *  message if not.
     */
-    public boolean sendMessage(Player player, CBMessage message) {
+    public boolean sendMessage(Player player, CBPacket packet) {
         if (isRunningCheatBreaker(player)) {
-            player.sendPluginMessage(this, MESSAGE_CHANNEL, GSON.toJson(message).getBytes(Charsets.UTF_8));
+            player.sendPluginMessage(this, MESSAGE_CHANNEL, CBPacket.getPacketData(packet));
             return true;
         }
         return false;
