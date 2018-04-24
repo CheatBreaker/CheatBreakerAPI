@@ -1,10 +1,12 @@
 package com.cheatbreaker.api.object;
 
 import com.google.common.base.Preconditions;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
+@EqualsAndHashCode
 public final class CBWaypoint {
 
     @Getter private final String name;
