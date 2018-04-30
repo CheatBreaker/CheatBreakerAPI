@@ -118,7 +118,7 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
     }
 
     public void setMinimapStatus(Player player, MinimapStatus status) {
-        sendMessage(player, new CBPacketMinimapStatus(status.name()));
+        sendMessage(player, new CBPacketServerRule("minimapStatus", status.name()));
     }
 
     public void giveAllStaffModules(Player player) {
