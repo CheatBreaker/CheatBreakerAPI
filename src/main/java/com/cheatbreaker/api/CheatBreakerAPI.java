@@ -51,7 +51,7 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
         Messenger messenger = getServer().getMessenger();
 
         messenger.registerOutgoingPluginChannel(this, MESSAGE_CHANNEL);
-        messenger.registerIncomingPluginChannel(this, MESSAGE_CHANNEL, (channel, player, bytes) -> CBPacket.handle(netHandlerServer, bytes));
+        messenger.registerIncomingPluginChannel(this, MESSAGE_CHANNEL, (channel, player, bytes) -> CBPacket.handle(netHandlerServer, bytes, player));
 
         getServer().getPluginManager().registerEvents(
                 new Listener() {
