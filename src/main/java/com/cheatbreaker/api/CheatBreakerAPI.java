@@ -41,7 +41,7 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
     @Getter private static CheatBreakerAPI instance;
     private final Set<UUID> playersRunningCheatBreaker = new HashSet<>();
 
-    @Setter private CBNetHandler netHandlerServer = new CBNetHandler();
+    @Setter private ICBNetHandlerServer netHandlerServer = new CBNetHandler();
 
     @Override
     public void onEnable() {

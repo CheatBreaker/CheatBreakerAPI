@@ -37,3 +37,11 @@ To retrieve server waypoints currently being displayed to a player, use `CheatBr
 
 ### Deleting Server Waypoints
 To retrieve server waypoints currently being displayed to a player, use `CheatBreakerAPI.getInstance().getWaypointManager().deleteWaypoint(Player player, Waypoint waypoint)`
+
+## Handling client messages
+
+### Using 
+
+### Waypoints
+
+If the client receives the server rule `(CBPacketServerRule)` "serverHandlesWaypoints" as true, the client will not store waypoints in its file system, but instead send waypoint creations/removals and updates to the server. 
