@@ -37,3 +37,17 @@ To retrieve server waypoints currently being displayed to a player, use `CheatBr
 
 ### Deleting Server Waypoints
 To retrieve server waypoints currently being displayed to a player, use `CheatBreakerAPI.getInstance().getWaypointManager().deleteWaypoint(Player player, Waypoint waypoint)`
+
+## Handling client messages
+
+### Implementing the net handler
+To handle client messages, use `CheatBreakerAPI.getInstance().setNetHandlerServer(ICBNetHandlerServer nethandler);`
+
+### Getting the player object from a packet
+A player object is attached to the packet when one is received, to retrieve it use 
+
+`Player player = packet.getAttachment();`
+
+### Waypoints
+
+If the client receives the server rule `(CBPacketServerRule)` "serverHandlesWaypoints" as true, the client will not store waypoints in its file system, but instead send waypoint creations/removals and updates to the server.

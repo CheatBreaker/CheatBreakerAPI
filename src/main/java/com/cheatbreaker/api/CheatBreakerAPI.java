@@ -14,6 +14,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -40,7 +41,7 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
     @Getter private static CheatBreakerAPI instance;
     private final Set<UUID> playersRunningCheatBreaker = new HashSet<>();
 
-    private final CBNetHandler netHandlerServer = new CBNetHandler();
+    @Setter private ICBNetHandlerServer netHandlerServer = new CBNetHandler();
 
     @Override
     public void onEnable() {
@@ -51,7 +52,7 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
         Messenger messenger = getServer().getMessenger();
 
         messenger.registerOutgoingPluginChannel(this, MESSAGE_CHANNEL);
-        messenger.registerIncomingPluginChannel(this, MESSAGE_CHANNEL, (channel, player, bytes) -> CBPacket.handle(netHandlerServer, bytes));
+        messenger.registerIncomingPluginChannel(this, MESSAGE_CHANNEL, (channel, player, bytes) -> CBPacket.handle(netHandlerServer, bytes, player));
 
         getServer().getPluginManager().registerEvents(
                 new Listener() {
@@ -118,7 +119,7 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
     }
 
     public void setMinimapStatus(Player player, MinimapStatus status) {
-        sendMessage(player, new CBPacketMinimapStatus(status.name()));
+        sendMessage(player, new CBPacketServerRule("minimapStatus", status.name()));
     }
 
     public void giveAllStaffModules(Player player) {
