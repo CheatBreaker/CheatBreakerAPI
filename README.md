@@ -50,4 +50,4 @@ A player object is attached to the packet when one is received, to retrieve it u
 
 ### Waypoints
 
-If the client receives the server rule `(CBPacketServerRule)` "serverHandlesWaypoints" as true, the client will not store waypoints in its file system, but instead send waypoint creations/removals and updates to the server.
+If the client receives the server rule _(CBPacketServerRule)_ `serverHandlesWaypoints` as true, the client will not store waypoints in its file system, but instead send waypoint creations/removals and updates to the server.
