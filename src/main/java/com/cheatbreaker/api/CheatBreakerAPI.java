@@ -7,6 +7,7 @@ import com.cheatbreaker.api.object.MinimapStatus;
 import com.cheatbreaker.api.object.StaffModule;
 import com.cheatbreaker.api.object.TitleType;
 import com.cheatbreaker.nethandler.CBPacket;
+import com.cheatbreaker.nethandler.obj.ServerRule;
 import com.cheatbreaker.nethandler.server.*;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
@@ -119,7 +120,7 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
     }
 
     public void setMinimapStatus(Player player, MinimapStatus status) {
-        sendMessage(player, new CBPacketServerRule("minimapStatus", status.name()));
+        sendMessage(player, new CBPacketServerRule(ServerRule.MINIMAP_STATUS, status.name()));
     }
 
     public void giveAllStaffModules(Player player) {
