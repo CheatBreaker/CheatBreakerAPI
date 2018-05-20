@@ -2,25 +2,28 @@ package com.cheatbreaker.api;
 
 import com.cheatbreaker.api.event.PlayerRegisterCBEvent;
 import com.cheatbreaker.api.event.PlayerUnregisterCBEvent;
+import com.cheatbreaker.api.net.CBNetHandler;
+import com.cheatbreaker.api.net.CBNetHandlerImpl;
 import com.cheatbreaker.api.object.CBNotification;
 import com.cheatbreaker.api.object.MinimapStatus;
 import com.cheatbreaker.api.object.StaffModule;
 import com.cheatbreaker.api.object.TitleType;
+import com.cheatbreaker.api.voice.VoiceChannel;
 import com.cheatbreaker.nethandler.CBPacket;
+import com.cheatbreaker.nethandler.client.CBPacketVoiceMute;
 import com.cheatbreaker.nethandler.obj.ServerRule;
 import com.cheatbreaker.nethandler.server.*;
-import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRegisterChannelEvent;
 import org.bukkit.event.player.PlayerUnregisterChannelEvent;
@@ -37,12 +40,19 @@ import java.util.stream.Collectors;
 public final class CheatBreakerAPI extends JavaPlugin implements Listener {
 
     private static final String MESSAGE_CHANNEL = "CB-Client";
-    private static final Gson GSON = new GsonBuilder().serializeNulls().create();
 
     @Getter private static CheatBreakerAPI instance;
     private final Set<UUID> playersRunningCheatBreaker = new HashSet<>();
 
-    @Setter private ICBNetHandlerServer netHandlerServer = new CBNetHandler();
+    @Setter private CBNetHandler netHandlerServer = new CBNetHandlerImpl();
+
+    private boolean voiceEnabled;
+
+    @Getter private List<VoiceChannel> voiceChannels = new ArrayList<>();
+
+    @Getter private final Map<UUID, VoiceChannel> playerActiveChannels = new HashMap<>();
+
+    private final Map<UUID, List<UUID>> muteMap = new HashMap<>();
 
     @Override
     public void onEnable() {
@@ -62,6 +72,13 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
                     public void onRegister(PlayerRegisterChannelEvent event) {
                         if (event.getChannel().equals(MESSAGE_CHANNEL)) {
                             playersRunningCheatBreaker.add(event.getPlayer().getUniqueId());
+                            muteMap.put(event.getPlayer().getUniqueId(), new ArrayList<>());
+
+                            if (voiceEnabled) {
+                                sendMessage(event.getPlayer(), new CBPacketServerRule(ServerRule.VOICE_ENABLED, true));
+                                sendVoiceChannels(event.getPlayer());
+                            }
+
                             getServer().getPluginManager().callEvent(new PlayerRegisterCBEvent(event.getPlayer()));
                         }
                     }
@@ -70,6 +87,9 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
                     public void onUnregister(PlayerUnregisterChannelEvent event) {
                         if (event.getChannel().equals(MESSAGE_CHANNEL)) {
                             playersRunningCheatBreaker.remove(event.getPlayer().getUniqueId());
+                            playerActiveChannels.remove(event.getPlayer().getUniqueId());
+                            muteMap.remove(event.getPlayer().getUniqueId());
+
                             getServer().getPluginManager().callEvent(new PlayerUnregisterCBEvent(event.getPlayer()));
                         }
                     }
@@ -77,6 +97,10 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
                     @EventHandler
                     public void onUnregister(PlayerQuitEvent event) {
                         playersRunningCheatBreaker.remove(event.getPlayer().getUniqueId());
+                        playerActiveChannels.remove(event.getPlayer().getUniqueId());
+                        muteMap.remove(event.getPlayer().getUniqueId());
+
+                        getPlayerChannels(event.getPlayer()).forEach(channel -> channel.removePlayer(event.getPlayer()));
                     }
 
                 }
@@ -178,6 +202,80 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
 
     public void sendTitle(Player player, TitleType type, String message, Duration fadeInTime, Duration displayTime, Duration fadeOutTime) {
          sendMessage(player, new CBPacketTitle(type.name().toLowerCase(), message, fadeInTime.toMillis(), displayTime.toMillis(), fadeOutTime.toMillis()));
+    }
+
+    public void voiceEnabled(boolean enabled) {
+        voiceEnabled = enabled;
+    }
+
+    public void createVoiceChannels(VoiceChannel... voiceChannels) {
+        this.voiceChannels.addAll(Arrays.asList(voiceChannels));
+        for (VoiceChannel channel : voiceChannels) {
+            for (Player player : channel.getPlayersInChannel()) {
+                sendVoiceChannel(player, channel);
+            }
+        }
+    }
+
+    public void deleteVoiceChannel(VoiceChannel channel) {
+        this.voiceChannels.removeIf(c -> {
+            boolean remove = c == channel;
+            if (remove) {
+                channel.validatePlayers();
+                for (Player player : channel.getPlayersInChannel()) {
+                    sendMessage(player, new CBPacketDeleteVoiceChannel(channel.getUuid()));
+                }
+            }
+            return remove;
+        });
+    }
+
+    public void deleteVoiceChannel(UUID channelUUID) {
+        getChannel(channelUUID).ifPresent(c -> deleteVoiceChannel(c));
+    }
+
+    public List<VoiceChannel> getPlayerChannels(Player player) {
+        return this.voiceChannels.stream().filter(channel -> channel.hasPlayer(player)).collect(Collectors.toList());
+    }
+
+    private void sendVoiceChannels(Player player) {
+        getPlayerChannels(player).forEach(channel -> {
+            sendVoiceChannel(player, channel);
+        });
+    }
+
+    public void sendVoiceChannel(Player player, VoiceChannel channel) {
+        channel.validatePlayers();
+        sendMessage(player, new CBPacketVoiceChannel(channel.getUuid(), channel.getName(), channel.toPlayersMap(), channel.toListeningMap()));
+    }
+
+    public void setActiveChannel(Player player, UUID uuid) {
+        getChannel(uuid).ifPresent(channel -> setActiveChannel(player, channel));
+    }
+
+    public Optional<VoiceChannel> getChannel(UUID uuid) {
+        return voiceChannels.stream().filter(channel -> channel.getUuid().equals(uuid)).findFirst();
+    }
+
+    public void setActiveChannel(Player player, VoiceChannel channel) {
+        Optional.ofNullable(playerActiveChannels.get(player.getUniqueId())).ifPresent(c -> {
+            if (c != channel) c.removeListening(player);
+        });
+        if (channel.addListening(player)) {
+            playerActiveChannels.put(player.getUniqueId(), channel);
+        }
+    }
+
+    public void toggleVoiceMute(Player player, UUID other)
+    {
+        if (!muteMap.get(player.getUniqueId()).removeIf(uuid -> uuid.equals(other))) {
+            muteMap.get(player.getUniqueId()).add(other);
+        }
+    }
+
+    public boolean playerHasPlayerMuted(Player player, Player other)
+    {
+        return muteMap.get(other.getUniqueId()).contains(player.getUniqueId());
     }
 
     /*
