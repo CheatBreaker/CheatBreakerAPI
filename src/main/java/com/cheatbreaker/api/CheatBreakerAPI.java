@@ -266,15 +266,13 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
         }
     }
 
-    public void toggleVoiceMute(Player player, UUID other)
-    {
+    public void toggleVoiceMute(Player player, UUID other) {
         if (!muteMap.get(player.getUniqueId()).removeIf(uuid -> uuid.equals(other))) {
             muteMap.get(player.getUniqueId()).add(other);
         }
     }
 
-    public boolean playerHasPlayerMuted(Player player, Player other)
-    {
+    public boolean playerHasPlayerMuted(Player player, Player other) {
         return muteMap.get(other.getUniqueId()).contains(player.getUniqueId());
     }
 

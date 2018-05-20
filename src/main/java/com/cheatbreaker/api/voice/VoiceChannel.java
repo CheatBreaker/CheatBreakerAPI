@@ -1,6 +1,7 @@
 package com.cheatbreaker.api.voice;
 
 import com.cheatbreaker.api.CheatBreakerAPI;
+import com.cheatbreaker.nethandler.server.CBPacketDeleteVoiceChannel;
 import com.cheatbreaker.nethandler.server.CBPacketVoiceChannelUpdate;
 import lombok.Getter;
 import org.bukkit.entity.Player;
@@ -29,6 +30,8 @@ public class VoiceChannel
     {
         if (hasPlayer(player)) return;
 
+        CheatBreakerAPI.getInstance().sendVoiceChannel(player, this);
+
         for (Player player1 : playersInChannel)
         {
             CheatBreakerAPI.getInstance().sendMessage(player1, new CBPacketVoiceChannelUpdate(0, uuid, player.getUniqueId(), player.getDisplayName()));
@@ -47,6 +50,9 @@ public class VoiceChannel
             CheatBreakerAPI.getInstance().sendMessage(player1, new CBPacketVoiceChannelUpdate(1, uuid, player.getUniqueId(), player.getDisplayName()));
         }
 
+        CheatBreakerAPI.getInstance().sendMessage(player, new CBPacketDeleteVoiceChannel(uuid));
+
+        playersListening.removeIf(player1 -> player1 == player);
         return playersInChannel.removeIf(player1 -> player1 == player);
     }
 
