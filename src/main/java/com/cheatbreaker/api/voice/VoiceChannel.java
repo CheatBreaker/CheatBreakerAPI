@@ -30,14 +30,13 @@ public class VoiceChannel
     {
         if (hasPlayer(player)) return;
 
-        CheatBreakerAPI.getInstance().sendVoiceChannel(player, this);
-
         for (Player player1 : playersInChannel)
         {
             CheatBreakerAPI.getInstance().sendMessage(player1, new CBPacketVoiceChannelUpdate(0, uuid, player.getUniqueId(), player.getDisplayName()));
         }
 
         playersInChannel.add(player);
+        CheatBreakerAPI.getInstance().sendVoiceChannel(player, this);
     }
 
     public boolean removePlayer(Player player)
