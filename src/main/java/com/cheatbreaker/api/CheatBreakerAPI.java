@@ -22,8 +22,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRegisterChannelEvent;
 import org.bukkit.event.player.PlayerUnregisterChannelEvent;
@@ -44,6 +45,8 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
     @Getter private static CheatBreakerAPI instance;
     private final Set<UUID> playersRunningCheatBreaker = new HashSet<>();
 
+    private final Set<UUID> playersConnecting = new HashSet<>();
+
     @Setter private CBNetHandler netHandlerServer = new CBNetHandlerImpl();
 
     private boolean voiceEnabled;
@@ -51,6 +54,8 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
     @Getter private List<VoiceChannel> voiceChannels = new ArrayList<>();
 
     @Getter private final Map<UUID, VoiceChannel> playerActiveChannels = new HashMap<>();
+
+    private final Map<UUID, List<CBPacket>> packetQueue = new HashMap<>();
 
     private final Map<UUID, List<UUID>> muteMap = new HashMap<>();
 
@@ -70,17 +75,22 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
 
                     @EventHandler
                     public void onRegister(PlayerRegisterChannelEvent event) {
+                        playersConnecting.remove(event.getPlayer().getUniqueId());
                         if (event.getChannel().equals(MESSAGE_CHANNEL)) {
                             playersRunningCheatBreaker.add(event.getPlayer().getUniqueId());
                             muteMap.put(event.getPlayer().getUniqueId(), new ArrayList<>());
 
                             if (voiceEnabled) {
                                 sendMessage(event.getPlayer(), new CBPacketServerRule(ServerRule.VOICE_ENABLED, true));
-                                sendVoiceChannels(event.getPlayer());
+                            }
+
+                            if (packetQueue.containsKey(event.getPlayer().getUniqueId())) {
+                                packetQueue.get(event.getPlayer().getUniqueId()).forEach(p -> sendMessage(event.getPlayer(), p));
                             }
 
                             getServer().getPluginManager().callEvent(new PlayerRegisterCBEvent(event.getPlayer()));
                         }
+                        packetQueue.remove(event.getPlayer().getUniqueId());
                     }
 
                     @EventHandler
@@ -97,10 +107,16 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
                     @EventHandler
                     public void onUnregister(PlayerQuitEvent event) {
                         playersRunningCheatBreaker.remove(event.getPlayer().getUniqueId());
+                        playersConnecting.remove(event.getPlayer().getUniqueId());
                         playerActiveChannels.remove(event.getPlayer().getUniqueId());
                         muteMap.remove(event.getPlayer().getUniqueId());
 
                         getPlayerChannels(event.getPlayer()).forEach(channel -> channel.removePlayer(event.getPlayer()));
+                    }
+
+                    @EventHandler(priority = EventPriority.LOWEST)
+                    public void onJoin(PlayerJoinEvent event) {
+                        playersConnecting.add(event.getPlayer().getUniqueId());
                     }
 
                 }
@@ -238,12 +254,6 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
         return this.voiceChannels.stream().filter(channel -> channel.hasPlayer(player)).collect(Collectors.toList());
     }
 
-    private void sendVoiceChannels(Player player) {
-        getPlayerChannels(player).forEach(channel -> {
-            sendVoiceChannel(player, channel);
-        });
-    }
-
     public void sendVoiceChannel(Player player, VoiceChannel channel) {
         channel.validatePlayers();
         sendMessage(player, new CBPacketVoiceChannel(channel.getUuid(), channel.getName(), channel.toPlayersMap(), channel.toListeningMap()));
@@ -286,6 +296,10 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
         if (isRunningCheatBreaker(player)) {
             player.sendPluginMessage(this, MESSAGE_CHANNEL, CBPacket.getPacketData(packet));
             return true;
+        } else if (playersConnecting.contains(player.getUniqueId())) {
+            packetQueue.putIfAbsent(player.getUniqueId(), new ArrayList<>());
+            packetQueue.get(player.getUniqueId()).add(packet);
+            return false;
         }
         return false;
     }
