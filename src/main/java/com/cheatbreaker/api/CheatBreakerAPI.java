@@ -163,6 +163,10 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
         sendMessage(player, new CBPacketServerRule(ServerRule.MINIMAP_STATUS, status.name()));
     }
 
+    public void setCompetitiveGame(Player player, boolean isCompetitive) {
+        sendMessage(player, new CBPacketServerRule(ServerRule.COMPETITIVE_GAMEMODE, isCompetitive));
+    }
+
     public void giveAllStaffModules(Player player) {
         for (StaffModule module : StaffModule.values()) {
             CheatBreakerAPI.getInstance().setStaffModuleState(player, module, true);
