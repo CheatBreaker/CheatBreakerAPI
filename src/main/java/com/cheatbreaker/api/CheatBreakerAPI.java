@@ -275,9 +275,7 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
         Optional.ofNullable(playerActiveChannels.get(player.getUniqueId())).ifPresent(c -> {
             if (c != channel) c.removeListening(player);
         });
-        if (channel.addListening(player)) {
-            playerActiveChannels.put(player.getUniqueId(), channel);
-        }
+        channel.addListening(player);
     }
 
     public void toggleVoiceMute(Player player, UUID other) {

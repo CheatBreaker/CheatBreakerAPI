@@ -66,6 +66,8 @@ public class VoiceChannel
             CheatBreakerAPI.getInstance().sendMessage(player1, new CBPacketVoiceChannelUpdate(2, uuid, player.getUniqueId(), player.getDisplayName()));
         }
 
+        CheatBreakerAPI.getInstance().getPlayerActiveChannels().put(player.getUniqueId(), this);
+
         return true;
     }
 

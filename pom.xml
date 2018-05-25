@@ -69,6 +69,7 @@
                             <artifactSet>
                                 <includes>
                                     <include>com.cheatbreaker:CheatBreakerAPINetHandler</include>
+                                    <include>io.netty:netty-all</include>
                                 </includes>
                             </artifactSet>
                         </configuration>
