@@ -55,7 +55,7 @@ public class VoiceChannel
         return playersInChannel.removeIf(player1 -> player1 == player);
     }
 
-    public boolean addListening(Player player)
+    private boolean addListening(Player player)
     {
         if (!hasPlayer(player) || isListening(player)) return false;
 
@@ -66,12 +66,10 @@ public class VoiceChannel
             CheatBreakerAPI.getInstance().sendMessage(player1, new CBPacketVoiceChannelUpdate(2, uuid, player.getUniqueId(), player.getDisplayName()));
         }
 
-        CheatBreakerAPI.getInstance().getPlayerActiveChannels().put(player.getUniqueId(), this);
-
         return true;
     }
 
-    public boolean removeListening(Player player)
+    private boolean removeListening(Player player)
     {
         if (!isListening(player)) return false;
 
@@ -82,6 +80,17 @@ public class VoiceChannel
         }
 
         return playersListening.removeIf(player1 -> player1 == player);
+    }
+
+    public void setActive(Player player)
+    {
+        CheatBreakerAPI api = CheatBreakerAPI.getInstance();
+        Optional.ofNullable(api.getPlayerActiveChannels().get(player.getUniqueId())).ifPresent(c -> {
+            if (c != this) c.removeListening(player);
+        });
+        if (addListening(player)) {
+            api.getPlayerActiveChannels().put(player.getUniqueId(), this);
+        }
     }
 
     public boolean validatePlayers()
