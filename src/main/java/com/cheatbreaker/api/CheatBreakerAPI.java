@@ -45,7 +45,7 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
     @Getter private static CheatBreakerAPI instance;
     private final Set<UUID> playersRunningCheatBreaker = new HashSet<>();
 
-    private final Set<UUID> playersConnecting = new HashSet<>();
+    private final Set<UUID> playersNotRegistered = new HashSet<>();
 
     @Setter private CBNetHandler netHandlerServer = new CBNetHandlerImpl();
 
@@ -75,7 +75,7 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
 
                     @EventHandler
                     public void onRegister(PlayerRegisterChannelEvent event) {
-                        playersConnecting.remove(event.getPlayer().getUniqueId());
+                        playersNotRegistered.remove(event.getPlayer().getUniqueId());
                         if (event.getChannel().equals(MESSAGE_CHANNEL)) {
                             playersRunningCheatBreaker.add(event.getPlayer().getUniqueId());
                             muteMap.put(event.getPlayer().getUniqueId(), new ArrayList<>());
@@ -107,7 +107,7 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
                     @EventHandler
                     public void onUnregister(PlayerQuitEvent event) {
                         playersRunningCheatBreaker.remove(event.getPlayer().getUniqueId());
-                        playersConnecting.remove(event.getPlayer().getUniqueId());
+                        playersNotRegistered.remove(event.getPlayer().getUniqueId());
                         playerActiveChannels.remove(event.getPlayer().getUniqueId());
                         muteMap.remove(event.getPlayer().getUniqueId());
 
@@ -116,7 +116,11 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
 
                     @EventHandler(priority = EventPriority.LOWEST)
                     public void onJoin(PlayerJoinEvent event) {
-                        playersConnecting.add(event.getPlayer().getUniqueId());
+                        Bukkit.getScheduler().runTaskLater(instance, () -> {
+                            if (!isRunningCheatBreaker(event.getPlayer())) {
+                                playersNotRegistered.add(event.getPlayer().getUniqueId());
+                            }
+                        }, 2L);
                     }
 
                 }
@@ -295,7 +299,7 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
         if (isRunningCheatBreaker(player)) {
             player.sendPluginMessage(this, MESSAGE_CHANNEL, CBPacket.getPacketData(packet));
             return true;
-        } else if (playersConnecting.contains(player.getUniqueId())) {
+        } else if (!playersNotRegistered.contains(player.getUniqueId())) {
             packetQueue.putIfAbsent(player.getUniqueId(), new ArrayList<>());
             packetQueue.get(player.getUniqueId()).add(packet);
             return false;
