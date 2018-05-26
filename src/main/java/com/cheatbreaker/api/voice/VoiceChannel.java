@@ -50,6 +50,7 @@ public class VoiceChannel
         }
 
         CheatBreakerAPI.getInstance().sendMessage(player, new CBPacketDeleteVoiceChannel(uuid));
+        CheatBreakerAPI.getInstance().getPlayerActiveChannels().remove(player.getUniqueId());
 
         playersListening.removeIf(player1 -> player1 == player);
         return playersInChannel.removeIf(player1 -> player1 == player);
