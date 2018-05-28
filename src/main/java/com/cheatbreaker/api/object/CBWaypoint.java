@@ -13,10 +13,10 @@ public final class CBWaypoint {
     @Getter private final int x;
     @Getter private final int y;
     @Getter private final int z;
-    @Getter private final int dimension;
+    @Getter private final String world;
     @Getter private final boolean forced;
 
-    public CBWaypoint(String name, Location location, boolean forced) {
+    public CBWaypoint(String name, Location location, String world, boolean forced) {
         this(
             name,
             // when adding a waypoint from a Location we assume the user doesn't want
@@ -25,17 +25,17 @@ public final class CBWaypoint {
             location.getBlockX(),
             location.getBlockY(),
             location.getBlockZ(),
-            Bukkit.getWorlds().indexOf(location.getWorld()),
+            world,
             forced
         );
     }
 
-    public CBWaypoint(String name, int x, int y, int z, int dimension, boolean forced) {
+    public CBWaypoint(String name, int x, int y, int z, String world, boolean forced) {
         this.name = Preconditions.checkNotNull(name, "name");
         this.x = x;
         this.y = y;
         this.z = z;
-        this.dimension = dimension;
+        this.world = world;
         this.forced = forced;
     }
 
