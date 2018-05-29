@@ -17,15 +17,13 @@ import com.google.common.collect.ImmutableSet;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerRegisterChannelEvent;
-import org.bukkit.event.player.PlayerUnregisterChannelEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.Messenger;
 import org.bukkit.util.Vector;
@@ -34,6 +32,7 @@ import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public final class CheatBreakerAPI extends JavaPlugin implements Listener {
@@ -56,6 +55,8 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
     private final Map<UUID, List<CBPacket>> packetQueue = new HashMap<>();
 
     private final Map<UUID, List<UUID>> muteMap = new HashMap<>();
+
+    private final Map<UUID, Function<World, String>> worldIdentifiers = new HashMap<>();
 
     @Override
     public void onEnable() {
@@ -87,6 +88,7 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
                             }
 
                             getServer().getPluginManager().callEvent(new PlayerRegisterCBEvent(event.getPlayer()));
+                            updateWorld(event.getPlayer());
                         }
                         packetQueue.remove(event.getPlayer().getUniqueId());
                     }
@@ -121,8 +123,33 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
                         }, 2L);
                     }
 
+                    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+                    public void onWorldChange(PlayerChangedWorldEvent event) {
+                        updateWorld(event.getPlayer());
+                    }
+
+                    private void updateWorld(Player player) {
+                        String worldIdentifier = getWorldIdentifier(player.getWorld());
+
+                        sendMessage(player, new CBPacketUpdateWorld(worldIdentifier));
+                    }
+
                 }
         , this);
+    }
+
+    public String getWorldIdentifier(World world) {
+        String worldIdentifier = world.getUID().toString();
+
+        if (worldIdentifiers.containsKey(world.getUID())) {
+            worldIdentifier = worldIdentifiers.get(world.getUID()).apply(world);
+        }
+
+        return worldIdentifier;
+    }
+
+    public void registerWorldIdentifier(World world, Function<World, String> identifier) {
+        worldIdentifiers.put(world.getUID(), identifier);
     }
 
     public boolean isRunningCheatBreaker(Player player) {
