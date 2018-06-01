@@ -327,6 +327,7 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
         } else if (!playersNotRegistered.contains(player.getUniqueId())) {
             packetQueue.putIfAbsent(player.getUniqueId(), new ArrayList<>());
             packetQueue.get(player.getUniqueId()).add(packet);
+            getLogger().info("Queueing " + packet.getClass().getSimpleName() + " to send to " + player.getName() + ".");
             return false;
         }
         return false;
