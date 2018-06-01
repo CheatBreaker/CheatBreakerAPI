@@ -20,7 +20,7 @@ public abstract class CBNetHandler implements ICBNetHandlerServer
         if (channel == null) return;
 
         channel.getPlayersListening().stream().filter(p -> p != player && !CheatBreakerAPI.getInstance().playerHasPlayerMuted(player, p)).forEach(other ->
-                CheatBreakerAPI.getInstance().sendMessage(other, new CBPacketVoice(player.getUniqueId(), packet.getData())));
+                CheatBreakerAPI.getInstance().sendPacket(other, new CBPacketVoice(player.getUniqueId(), packet.getData())));
     }
 
     @Override

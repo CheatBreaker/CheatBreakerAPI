@@ -4,6 +4,7 @@ import com.cheatbreaker.api.event.PlayerRegisterCBEvent;
 import com.cheatbreaker.api.event.PlayerUnregisterCBEvent;
 import com.cheatbreaker.api.net.CBNetHandler;
 import com.cheatbreaker.api.net.CBNetHandlerImpl;
+import com.cheatbreaker.api.net.event.CBPacketSentEvent;
 import com.cheatbreaker.api.object.CBNotification;
 import com.cheatbreaker.api.object.MinimapStatus;
 import com.cheatbreaker.api.object.StaffModule;
@@ -14,7 +15,6 @@ import com.cheatbreaker.nethandler.obj.ServerRule;
 import com.cheatbreaker.nethandler.server.*;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.gson.GsonBuilder;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
@@ -85,12 +85,12 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
                         muteMap.put(event.getPlayer().getUniqueId(), new ArrayList<>());
 
                         if (voiceEnabled) {
-                            sendMessage(event.getPlayer(), new CBPacketServerRule(ServerRule.VOICE_ENABLED, true));
+                            sendPacket(event.getPlayer(), new CBPacketServerRule(ServerRule.VOICE_ENABLED, true));
                         }
 
                         if (packetQueue.containsKey(event.getPlayer().getUniqueId())) {
                             packetQueue.get(event.getPlayer().getUniqueId()).forEach(p -> {
-                                sendMessage(event.getPlayer(), p);
+                                sendPacket(event.getPlayer(), p);
                             });
 
                             packetQueue.remove(event.getPlayer().getUniqueId());
@@ -139,7 +139,7 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
                     private void updateWorld(Player player) {
                         String worldIdentifier = getWorldIdentifier(player.getWorld());
 
-                        sendMessage(player, new CBPacketUpdateWorld(worldIdentifier));
+                        sendPacket(player, new CBPacketUpdateWorld(worldIdentifier));
                     }
 
                 }
@@ -177,7 +177,7 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
     }
 
     public void sendNotification(Player player, CBNotification notification) {
-        sendMessage(player, new CBPacketNotification(
+        sendPacket(player, new CBPacketNotification(
                 notification.getMessage(),
                 notification.getDurationMs(),
                 notification.getLevel().name()
@@ -193,15 +193,15 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
     }
 
     public void setStaffModuleState(Player player, StaffModule module, boolean state) {
-        sendMessage(player, new CBPacketStaffModState(module.name(), state));
+        sendPacket(player, new CBPacketStaffModState(module.name(), state));
     }
 
     public void setMinimapStatus(Player player, MinimapStatus status) {
-        sendMessage(player, new CBPacketServerRule(ServerRule.MINIMAP_STATUS, status.name()));
+        sendPacket(player, new CBPacketServerRule(ServerRule.MINIMAP_STATUS, status.name()));
     }
 
     public void setCompetitiveGame(Player player, boolean isCompetitive) {
-        sendMessage(player, new CBPacketServerRule(ServerRule.COMPETITIVE_GAMEMODE, isCompetitive));
+        sendPacket(player, new CBPacketServerRule(ServerRule.COMPETITIVE_GAMEMODE, isCompetitive));
     }
 
     public void giveAllStaffModules(Player player) {
@@ -222,7 +222,7 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
 
     public void sendTeammates(Player player, CBPacketTeammates packet) {
         validatePlayers(player, packet);
-        sendMessage(player, packet);
+        sendPacket(player, packet);
     }
 
     public void validatePlayers(Player sendingTo, CBPacketTeammates packet) {
@@ -230,27 +230,27 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
     }
 
     public void addHologram(Player player, UUID id, Vector position, String[] lines) {
-        sendMessage(player, new CBPacketAddHologram(id, position.getX(), position.getY(), position.getZ(), Arrays.asList(lines)));
+        sendPacket(player, new CBPacketAddHologram(id, position.getX(), position.getY(), position.getZ(), Arrays.asList(lines)));
     }
 
     public void updateHologram(Player player, UUID id, String[] lines) {
-        sendMessage(player, new CBPacketUpdateHologram(id, Arrays.asList(lines)));
+        sendPacket(player, new CBPacketUpdateHologram(id, Arrays.asList(lines)));
     }
 
     public void removeHologram(Player player, UUID id) {
-        sendMessage(player, new CBPacketRemoveHologram(id));
+        sendPacket(player, new CBPacketRemoveHologram(id));
     }
 
     public void overrideNametag(LivingEntity target, List<String> nametag, Player viewer) {
-        sendMessage(viewer, new CBPacketOverrideNametags(target.getEntityId(), nametag));
+        sendPacket(viewer, new CBPacketOverrideNametags(target.getEntityId(), nametag));
     }
 
     public void resetNametag(LivingEntity target, Player viewer) {
-        sendMessage(viewer, new CBPacketOverrideNametags(target.getEntityId(), null));
+        sendPacket(viewer, new CBPacketOverrideNametags(target.getEntityId(), null));
     }
 
     public void hideNametag(LivingEntity target, Player viewer) {
-        sendMessage(viewer, new CBPacketOverrideNametags(target.getEntityId(), ImmutableList.of()));
+        sendPacket(viewer, new CBPacketOverrideNametags(target.getEntityId(), ImmutableList.of()));
     }
 
     public void sendTitle(Player player, TitleType type, String message, Duration displayTime) {
@@ -258,7 +258,7 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
     }
 
     public void sendTitle(Player player, TitleType type, String message, Duration fadeInTime, Duration displayTime, Duration fadeOutTime) {
-         sendMessage(player, new CBPacketTitle(type.name().toLowerCase(), message, fadeInTime.toMillis(), displayTime.toMillis(), fadeOutTime.toMillis()));
+         sendPacket(player, new CBPacketTitle(type.name().toLowerCase(), message, fadeInTime.toMillis(), displayTime.toMillis(), fadeOutTime.toMillis()));
     }
 
     public void voiceEnabled(boolean enabled) {
@@ -280,7 +280,7 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
             if (remove) {
                 channel.validatePlayers();
                 for (Player player : channel.getPlayersInChannel()) {
-                    sendMessage(player, new CBPacketDeleteVoiceChannel(channel.getUuid()));
+                    sendPacket(player, new CBPacketDeleteVoiceChannel(channel.getUuid()));
                 }
             }
             return remove;
@@ -297,7 +297,7 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
 
     public void sendVoiceChannel(Player player, VoiceChannel channel) {
         channel.validatePlayers();
-        sendMessage(player, new CBPacketVoiceChannel(channel.getUuid(), channel.getName(), channel.toPlayersMap(), channel.toListeningMap()));
+        sendPacket(player, new CBPacketVoiceChannel(channel.getUuid(), channel.getName(), channel.toPlayersMap(), channel.toListeningMap()));
     }
 
     public void setActiveChannel(Player player, UUID uuid) {
@@ -328,9 +328,10 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
     *  notification if a player is running CheatBreaker, and a chat
     *  message if not.
     */
-    public boolean sendMessage(Player player, CBPacket packet) {
+    public boolean sendPacket(Player player, CBPacket packet) {
         if (isRunningCheatBreaker(player)) {
             player.sendPluginMessage(this, MESSAGE_CHANNEL, CBPacket.getPacketData(packet));
+            Bukkit.getPluginManager().callEvent(new CBPacketSentEvent(player, packet));
             return true;
         } else if (!playersNotRegistered.contains(player.getUniqueId())) {
             packetQueue.putIfAbsent(player.getUniqueId(), new ArrayList<>());

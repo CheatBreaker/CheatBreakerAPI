@@ -32,7 +32,7 @@ public class VoiceChannel
 
         for (Player player1 : playersInChannel)
         {
-            CheatBreakerAPI.getInstance().sendMessage(player1, new CBPacketVoiceChannelUpdate(0, uuid, player.getUniqueId(), player.getDisplayName()));
+            CheatBreakerAPI.getInstance().sendPacket(player1, new CBPacketVoiceChannelUpdate(0, uuid, player.getUniqueId(), player.getDisplayName()));
         }
 
         playersInChannel.add(player);
@@ -46,10 +46,10 @@ public class VoiceChannel
         for (Player player1 : playersInChannel)
         {
             if (player1 == player) continue;
-            CheatBreakerAPI.getInstance().sendMessage(player1, new CBPacketVoiceChannelUpdate(1, uuid, player.getUniqueId(), player.getDisplayName()));
+            CheatBreakerAPI.getInstance().sendPacket(player1, new CBPacketVoiceChannelUpdate(1, uuid, player.getUniqueId(), player.getDisplayName()));
         }
 
-        CheatBreakerAPI.getInstance().sendMessage(player, new CBPacketDeleteVoiceChannel(uuid));
+        CheatBreakerAPI.getInstance().sendPacket(player, new CBPacketDeleteVoiceChannel(uuid));
         CheatBreakerAPI.getInstance().getPlayerActiveChannels().remove(player.getUniqueId());
 
         playersListening.removeIf(player1 -> player1 == player);
@@ -64,7 +64,7 @@ public class VoiceChannel
 
         for (Player player1 : playersInChannel)
         {
-            CheatBreakerAPI.getInstance().sendMessage(player1, new CBPacketVoiceChannelUpdate(2, uuid, player.getUniqueId(), player.getDisplayName()));
+            CheatBreakerAPI.getInstance().sendPacket(player1, new CBPacketVoiceChannelUpdate(2, uuid, player.getUniqueId(), player.getDisplayName()));
         }
 
         return true;
@@ -77,7 +77,7 @@ public class VoiceChannel
         for (Player player1 : playersInChannel)
         {
             if (player1 == player) continue;
-            CheatBreakerAPI.getInstance().sendMessage(player1, new CBPacketVoiceChannelUpdate(3, uuid, player.getUniqueId(), player.getDisplayName()));
+            CheatBreakerAPI.getInstance().sendPacket(player1, new CBPacketVoiceChannelUpdate(3, uuid, player.getUniqueId(), player.getDisplayName()));
         }
 
         return playersListening.removeIf(player1 -> player1 == player);
