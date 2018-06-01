@@ -323,12 +323,15 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
     public boolean sendMessage(Player player, CBPacket packet) {
         if (isRunningCheatBreaker(player)) {
             player.sendPluginMessage(this, MESSAGE_CHANNEL, CBPacket.getPacketData(packet));
+            getLogger().info("Sent " + packet.getClass().getSimpleName() + " to " + player.getName() + ".");
             return true;
         } else if (!playersNotRegistered.contains(player.getUniqueId())) {
             packetQueue.putIfAbsent(player.getUniqueId(), new ArrayList<>());
             packetQueue.get(player.getUniqueId()).add(packet);
             getLogger().info("Queueing " + packet.getClass().getSimpleName() + " to send to " + player.getName() + ".");
             return false;
+        } else {
+            getLogger().info("Could not handle packet sending (" + packet.getClass().getSimpleName() + " -> " + player.getName() + ")");
         }
         return false;
     }
