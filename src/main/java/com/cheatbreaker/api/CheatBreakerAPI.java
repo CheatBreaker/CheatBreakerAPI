@@ -261,8 +261,16 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
         sendTitle(player, type, message, Duration.ofMillis(500), displayTime, Duration.ofMillis(500));
     }
 
+    public void sendTitle(Player player, TitleType type, String message, Duration displayTime, float scale) {
+        sendTitle(player, type, message, Duration.ofMillis(500), displayTime, Duration.ofMillis(500), scale);
+    }
+
     public void sendTitle(Player player, TitleType type, String message, Duration fadeInTime, Duration displayTime, Duration fadeOutTime) {
-         sendPacket(player, new CBPacketTitle(type.name().toLowerCase(), message, fadeInTime.toMillis(), displayTime.toMillis(), fadeOutTime.toMillis()));
+        sendTitle(player, type, message, fadeInTime, displayTime, fadeOutTime, 1F);
+    }
+
+    public void sendTitle(Player player, TitleType type, String message, Duration fadeInTime, Duration displayTime, Duration fadeOutTime, float scale) {
+        sendPacket(player, new CBPacketTitle(type.name().toLowerCase(), message, scale, fadeInTime.toMillis(), displayTime.toMillis(), fadeOutTime.toMillis()));
     }
 
     public void voiceEnabled(boolean enabled) {
