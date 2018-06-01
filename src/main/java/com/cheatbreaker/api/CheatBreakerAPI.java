@@ -128,7 +128,7 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
                             if (!isRunningCheatBreaker(event.getPlayer())) {
                                 playersNotRegistered.add(event.getPlayer().getUniqueId());
                             }
-                        }, 2L);
+                        }, 2 * 20L);
                     }
 
                     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
