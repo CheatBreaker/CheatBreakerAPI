@@ -14,6 +14,7 @@ import com.cheatbreaker.nethandler.obj.ServerRule;
 import com.cheatbreaker.nethandler.server.*;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.google.gson.GsonBuilder;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
@@ -82,6 +83,8 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
                             if (voiceEnabled) {
                                 sendMessage(event.getPlayer(), new CBPacketServerRule(ServerRule.VOICE_ENABLED, true));
                             }
+
+                            getLogger().info(new GsonBuilder().setPrettyPrinting().create().toJson(packetQueue));
 
                             if (packetQueue.containsKey(event.getPlayer().getUniqueId())) {
                                 getLogger().info("Flushing packet queue for " + event.getPlayer().getName() + "(" + packetQueue.get(event.getPlayer().getUniqueId()).size() + ")");
@@ -333,7 +336,7 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
         } else if (!playersNotRegistered.contains(player.getUniqueId())) {
             packetQueue.putIfAbsent(player.getUniqueId(), new ArrayList<>());
             packetQueue.get(player.getUniqueId()).add(packet);
-            getLogger().info("Queueing " + packet.getClass().getSimpleName() + " to send to " + player.getName() + ".");
+            getLogger().info("Queueing " + packet.getClass().getSimpleName() + " to send to " + player.getName() + " (" + player.getUniqueId() + ".");
             return false;
         } else {
             getLogger().info("Could not handle packet sending (" + packet.getClass().getSimpleName() + " -> " + player.getName() + ")");
