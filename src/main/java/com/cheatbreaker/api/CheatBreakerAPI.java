@@ -88,15 +88,10 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
                             sendMessage(event.getPlayer(), new CBPacketServerRule(ServerRule.VOICE_ENABLED, true));
                         }
 
-                        getLogger().info(new GsonBuilder().setPrettyPrinting().create().toJson(packetQueue));
-
                         if (packetQueue.containsKey(event.getPlayer().getUniqueId())) {
-                            getLogger().info("Flushing packet queue for " + event.getPlayer().getName() + "(" + packetQueue.get(event.getPlayer().getUniqueId()).size() + ")");
                             packetQueue.get(event.getPlayer().getUniqueId()).forEach(p -> {
-                                getLogger().info("Queued: " + p.getClass().getSimpleName() + ", sending");
                                 sendMessage(event.getPlayer(), p);
                             });
-                            getLogger().info("Flush complete.");
 
                             packetQueue.remove(event.getPlayer().getUniqueId());
                         }
@@ -132,7 +127,6 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
                             if (!isRunningCheatBreaker(event.getPlayer())) {
                                 playersNotRegistered.add(event.getPlayer().getUniqueId());
                                 packetQueue.remove(event.getPlayer().getUniqueId());
-                                getLogger().info(new GsonBuilder().setPrettyPrinting().create().toJson(packetQueue));
                             }
                         }, 2 * 20L);
                     }
@@ -341,8 +335,6 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
         } else if (!playersNotRegistered.contains(player.getUniqueId())) {
             packetQueue.putIfAbsent(player.getUniqueId(), new ArrayList<>());
             packetQueue.get(player.getUniqueId()).add(packet);
-            getLogger().info("Queueing " + packet.getClass().getSimpleName() + " to send to " + player.getName() + " (" + player.getUniqueId() + ".");
-            getLogger().info(new GsonBuilder().setPrettyPrinting().create().toJson(packetQueue));
             return false;
         }
         return false;
