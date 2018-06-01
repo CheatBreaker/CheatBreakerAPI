@@ -4,6 +4,7 @@ import com.cheatbreaker.api.event.PlayerRegisterCBEvent;
 import com.cheatbreaker.api.event.PlayerUnregisterCBEvent;
 import com.cheatbreaker.api.net.CBNetHandler;
 import com.cheatbreaker.api.net.CBNetHandlerImpl;
+import com.cheatbreaker.api.net.event.CBPacketReceivedEvent;
 import com.cheatbreaker.api.net.event.CBPacketSentEvent;
 import com.cheatbreaker.api.object.CBNotification;
 import com.cheatbreaker.api.object.MinimapStatus;
@@ -68,7 +69,10 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
         Messenger messenger = getServer().getMessenger();
 
         messenger.registerOutgoingPluginChannel(this, MESSAGE_CHANNEL);
-        messenger.registerIncomingPluginChannel(this, MESSAGE_CHANNEL, (channel, player, bytes) -> CBPacket.handle(netHandlerServer, bytes, player));
+        messenger.registerIncomingPluginChannel(this, MESSAGE_CHANNEL, (channel, player, bytes) -> {
+            CBPacket packet = CBPacket.handle(netHandlerServer, bytes, player);
+            Bukkit.getPluginManager().callEvent(new CBPacketReceivedEvent(player, packet));
+        });
 
         getServer().getPluginManager().registerEvents(
                 new Listener() {
