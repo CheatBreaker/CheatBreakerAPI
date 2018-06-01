@@ -114,12 +114,12 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
 
                     @EventHandler
                     public void onUnregister(PlayerQuitEvent event) {
+                        getPlayerChannels(event.getPlayer()).forEach(channel -> channel.removePlayer(event.getPlayer()));
+
                         playersRunningCheatBreaker.remove(event.getPlayer().getUniqueId());
                         playersNotRegistered.remove(event.getPlayer().getUniqueId());
                         playerActiveChannels.remove(event.getPlayer().getUniqueId());
                         muteMap.remove(event.getPlayer().getUniqueId());
-
-                        getPlayerChannels(event.getPlayer()).forEach(channel -> channel.removePlayer(event.getPlayer()));
                     }
 
                     @EventHandler(priority = EventPriority.LOWEST)
@@ -127,6 +127,8 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
                         Bukkit.getScheduler().runTaskLater(instance, () -> {
                             if (!isRunningCheatBreaker(event.getPlayer())) {
                                 playersNotRegistered.add(event.getPlayer().getUniqueId());
+                                packetQueue.remove(event.getPlayer().getUniqueId());
+                                getLogger().info(new GsonBuilder().setPrettyPrinting().create().toJson(packetQueue));
                             }
                         }, 2 * 20L);
                     }
@@ -331,15 +333,13 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
     public boolean sendMessage(Player player, CBPacket packet) {
         if (isRunningCheatBreaker(player)) {
             player.sendPluginMessage(this, MESSAGE_CHANNEL, CBPacket.getPacketData(packet));
-            getLogger().info("Sent " + packet.getClass().getSimpleName() + " to " + player.getName() + ".");
             return true;
         } else if (!playersNotRegistered.contains(player.getUniqueId())) {
             packetQueue.putIfAbsent(player.getUniqueId(), new ArrayList<>());
             packetQueue.get(player.getUniqueId()).add(packet);
             getLogger().info("Queueing " + packet.getClass().getSimpleName() + " to send to " + player.getName() + " (" + player.getUniqueId() + ".");
+            getLogger().info(new GsonBuilder().setPrettyPrinting().create().toJson(packetQueue));
             return false;
-        } else {
-            getLogger().info("Could not handle packet sending (" + packet.getClass().getSimpleName() + " -> " + player.getName() + ")");
         }
         return false;
     }
