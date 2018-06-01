@@ -75,30 +75,34 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
 
                     @EventHandler
                     public void onRegister(PlayerRegisterChannelEvent event) {
-                        playersNotRegistered.remove(event.getPlayer().getUniqueId());
-                        if (event.getChannel().equals(MESSAGE_CHANNEL)) {
-                            playersRunningCheatBreaker.add(event.getPlayer().getUniqueId());
-                            muteMap.put(event.getPlayer().getUniqueId(), new ArrayList<>());
-
-                            if (voiceEnabled) {
-                                sendMessage(event.getPlayer(), new CBPacketServerRule(ServerRule.VOICE_ENABLED, true));
-                            }
-
-                            getLogger().info(new GsonBuilder().setPrettyPrinting().create().toJson(packetQueue));
-
-                            if (packetQueue.containsKey(event.getPlayer().getUniqueId())) {
-                                getLogger().info("Flushing packet queue for " + event.getPlayer().getName() + "(" + packetQueue.get(event.getPlayer().getUniqueId()).size() + ")");
-                                packetQueue.get(event.getPlayer().getUniqueId()).forEach(p -> {
-                                    getLogger().info("Queued: " + p.getClass().getSimpleName() + ", sending");
-                                    sendMessage(event.getPlayer(), p);
-                                });
-                                getLogger().info("Flush complete.");
-                            }
-
-                            getServer().getPluginManager().callEvent(new PlayerRegisterCBEvent(event.getPlayer()));
-                            updateWorld(event.getPlayer());
+                        if (!event.getChannel().equals(MESSAGE_CHANNEL)) {
+                            return;
                         }
-                        packetQueue.remove(event.getPlayer().getUniqueId());
+
+                        playersNotRegistered.remove(event.getPlayer().getUniqueId());
+                        playersRunningCheatBreaker.add(event.getPlayer().getUniqueId());
+
+                        muteMap.put(event.getPlayer().getUniqueId(), new ArrayList<>());
+
+                        if (voiceEnabled) {
+                            sendMessage(event.getPlayer(), new CBPacketServerRule(ServerRule.VOICE_ENABLED, true));
+                        }
+
+                        getLogger().info(new GsonBuilder().setPrettyPrinting().create().toJson(packetQueue));
+
+                        if (packetQueue.containsKey(event.getPlayer().getUniqueId())) {
+                            getLogger().info("Flushing packet queue for " + event.getPlayer().getName() + "(" + packetQueue.get(event.getPlayer().getUniqueId()).size() + ")");
+                            packetQueue.get(event.getPlayer().getUniqueId()).forEach(p -> {
+                                getLogger().info("Queued: " + p.getClass().getSimpleName() + ", sending");
+                                sendMessage(event.getPlayer(), p);
+                            });
+                            getLogger().info("Flush complete.");
+
+                            packetQueue.remove(event.getPlayer().getUniqueId());
+                        }
+
+                        getServer().getPluginManager().callEvent(new PlayerRegisterCBEvent(event.getPlayer()));
+                        updateWorld(event.getPlayer());
                     }
 
                     @EventHandler
