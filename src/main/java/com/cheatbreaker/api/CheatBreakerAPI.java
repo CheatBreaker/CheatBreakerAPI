@@ -84,7 +84,12 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
                             }
 
                             if (packetQueue.containsKey(event.getPlayer().getUniqueId())) {
-                                packetQueue.get(event.getPlayer().getUniqueId()).forEach(p -> sendMessage(event.getPlayer(), p));
+                                getLogger().info("Flushing packet queue for " + event.getPlayer().getName() + "(" + packetQueue.get(event.getPlayer().getUniqueId()).size() + ")");
+                                packetQueue.get(event.getPlayer().getUniqueId()).forEach(p -> {
+                                    getLogger().info("Queued: " + p.getClass().getSimpleName() + ", sending");
+                                    sendMessage(event.getPlayer(), p);
+                                });
+                                getLogger().info("Flush complete.");
                             }
 
                             getServer().getPluginManager().callEvent(new PlayerRegisterCBEvent(event.getPlayer()));
