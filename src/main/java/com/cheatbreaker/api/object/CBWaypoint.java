@@ -1,5 +1,6 @@
 package com.cheatbreaker.api.object;
 
+import com.cheatbreaker.api.CheatBreakerAPI;
 import com.google.common.base.Preconditions;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -14,9 +15,10 @@ public final class CBWaypoint {
     @Getter private final int y;
     @Getter private final int z;
     @Getter private final String world;
+    @Getter private final int color;
     @Getter private final boolean forced;
 
-    public CBWaypoint(String name, Location location, String world, boolean forced) {
+    public CBWaypoint(String name, Location location, int color, boolean forced) {
         this(
             name,
             // when adding a waypoint from a Location we assume the user doesn't want
@@ -25,17 +27,19 @@ public final class CBWaypoint {
             location.getBlockX(),
             location.getBlockY(),
             location.getBlockZ(),
-            world,
+            CheatBreakerAPI.getInstance().getWorldIdentifier(location.getWorld()),
+            color,
             forced
         );
     }
 
-    public CBWaypoint(String name, int x, int y, int z, String world, boolean forced) {
+    public CBWaypoint(String name, int x, int y, int z, String world, int color, boolean forced) {
         this.name = Preconditions.checkNotNull(name, "name");
         this.x = x;
         this.y = y;
         this.z = z;
         this.world = world;
+        this.color = color;
         this.forced = forced;
     }
 
