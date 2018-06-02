@@ -273,7 +273,7 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
     }
 
     public void sendWaypoint(Player player, CBWaypoint waypoint) {
-        CheatBreakerAPI.getInstance().sendPacket(player, new CBPacketAddWaypoint(
+        sendPacket(player, new CBPacketAddWaypoint(
                 waypoint.getName(),
                 waypoint.getWorld(),
                 waypoint.getColor(),
@@ -285,10 +285,18 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
     }
 
     public void removeWaypoint(Player player, CBWaypoint waypoint) {
-        CheatBreakerAPI.getInstance().sendPacket(player, new CBPacketRemoveWaypoint(
+        sendPacket(player, new CBPacketRemoveWaypoint(
                 waypoint.getName(),
                 waypoint.getWorld()
         ));
+    }
+
+    public void sendCooldown(Player player, CBCooldown cooldown) {
+        sendPacket(player, new CBPacketCooldown(cooldown.getMessage(), cooldown.getDurationMs(), cooldown.getIcon().getId()));
+    }
+
+    public void clearCooldown(Player player, CBCooldown cooldown) {
+        sendPacket(player, new CBPacketCooldown(cooldown.getMessage(), 0L, cooldown.getIcon().getId()));
     }
 
     public void voiceEnabled(boolean enabled) {
