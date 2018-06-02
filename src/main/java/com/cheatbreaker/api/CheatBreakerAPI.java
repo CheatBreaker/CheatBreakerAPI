@@ -6,14 +6,13 @@ import com.cheatbreaker.api.net.CBNetHandler;
 import com.cheatbreaker.api.net.CBNetHandlerImpl;
 import com.cheatbreaker.api.net.event.CBPacketReceivedEvent;
 import com.cheatbreaker.api.net.event.CBPacketSentEvent;
-import com.cheatbreaker.api.object.CBNotification;
-import com.cheatbreaker.api.object.MinimapStatus;
-import com.cheatbreaker.api.object.StaffModule;
-import com.cheatbreaker.api.object.TitleType;
+import com.cheatbreaker.api.object.*;
 import com.cheatbreaker.api.voice.VoiceChannel;
 import com.cheatbreaker.nethandler.CBPacket;
 import com.cheatbreaker.nethandler.obj.ServerRule;
 import com.cheatbreaker.nethandler.server.*;
+import com.cheatbreaker.nethandler.shared.CBPacketAddWaypoint;
+import com.cheatbreaker.nethandler.shared.CBPacketRemoveWaypoint;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import lombok.Getter;
@@ -271,6 +270,25 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
 
     public void sendTitle(Player player, TitleType type, String message, Duration fadeInTime, Duration displayTime, Duration fadeOutTime, float scale) {
         sendPacket(player, new CBPacketTitle(type.name().toLowerCase(), message, scale, displayTime.toMillis(), fadeInTime.toMillis(), fadeOutTime.toMillis()));
+    }
+
+    public void sendWaypoint(Player player, CBWaypoint waypoint) {
+        CheatBreakerAPI.getInstance().sendPacket(player, new CBPacketAddWaypoint(
+                waypoint.getName(),
+                waypoint.getWorld(),
+                waypoint.getColor(),
+                waypoint.getX(),
+                waypoint.getY(),
+                waypoint.getZ(),
+                waypoint.isForced()
+        ));
+    }
+
+    public void removeWaypoint(Player player, CBWaypoint waypoint) {
+        CheatBreakerAPI.getInstance().sendPacket(player, new CBPacketRemoveWaypoint(
+                waypoint.getName(),
+                waypoint.getWorld()
+        ));
     }
 
     public void voiceEnabled(boolean enabled) {
