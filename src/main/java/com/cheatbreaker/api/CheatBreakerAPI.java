@@ -280,7 +280,8 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
                 waypoint.getX(),
                 waypoint.getY(),
                 waypoint.getZ(),
-                waypoint.isForced()
+                waypoint.isForced(),
+                waypoint.isVisible()
         ));
     }
 

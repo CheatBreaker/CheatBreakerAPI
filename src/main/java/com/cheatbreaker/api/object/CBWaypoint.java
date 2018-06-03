@@ -17,9 +17,9 @@ public final class CBWaypoint {
     @Getter private final String world;
     @Getter private final int color;
     @Getter private final boolean forced;
-    @Getter private boolean active = true;
+    @Getter private boolean visible = true;
 
-    public CBWaypoint(String name, Location location, int color, boolean forced, boolean active) {
+    public CBWaypoint(String name, Location location, int color, boolean forced, boolean visible) {
         this(
             name,
             location.getBlockX(),
@@ -27,8 +27,7 @@ public final class CBWaypoint {
             location.getBlockZ(),
             CheatBreakerAPI.getInstance().getWorldIdentifier(location.getWorld()),
             color,
-            forced,
-            active
+            forced, visible
         );
     }
 
