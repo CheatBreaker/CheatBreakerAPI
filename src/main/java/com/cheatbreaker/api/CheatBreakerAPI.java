@@ -370,6 +370,10 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
         if (isRunningCheatBreaker(player)) {
             player.sendPluginMessage(this, MESSAGE_CHANNEL, CBPacket.getPacketData(packet));
             Bukkit.getPluginManager().callEvent(new CBPacketSentEvent(player, packet));
+
+            System.out.println("\n" + packet.getClass().getSimpleName() + " to " + player.getName() + "\n");
+            new Exception().printStackTrace();
+            System.out.println();
             return true;
         } else if (!playersNotRegistered.contains(player.getUniqueId())) {
             packetQueue.putIfAbsent(player.getUniqueId(), new ArrayList<>());
