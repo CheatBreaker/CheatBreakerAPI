@@ -273,6 +273,10 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
     }
 
     public void sendWaypoint(Player player, CBWaypoint waypoint) {
+        System.out.println("\nSending " + waypoint.getName() + " to " + player.getName());
+        new Exception().printStackTrace();
+        System.out.println("\n");
+
         sendPacket(player, new CBPacketAddWaypoint(
                 waypoint.getName(),
                 waypoint.getWorld(),
