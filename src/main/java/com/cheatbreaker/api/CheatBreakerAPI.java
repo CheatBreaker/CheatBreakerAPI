@@ -320,6 +320,9 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
                 channel.validatePlayers();
                 for (Player player : channel.getPlayersInChannel()) {
                     sendPacket(player, new CBPacketDeleteVoiceChannel(channel.getUuid()));
+                    if (getPlayerActiveChannels().get(player.getUniqueId()) == channel) {
+                        getPlayerActiveChannels().remove(player);
+                    }
                 }
             }
             return remove;
