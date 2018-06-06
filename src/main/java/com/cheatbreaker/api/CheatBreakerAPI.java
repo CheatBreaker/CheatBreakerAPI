@@ -21,6 +21,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -70,7 +71,11 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
         messenger.registerOutgoingPluginChannel(this, MESSAGE_CHANNEL);
         messenger.registerIncomingPluginChannel(this, MESSAGE_CHANNEL, (channel, player, bytes) -> {
             CBPacket packet = CBPacket.handle(netHandlerServer, bytes, player);
-            Bukkit.getPluginManager().callEvent(new CBPacketReceivedEvent(player, packet));
+            CBPacketReceivedEvent event;
+            Bukkit.getPluginManager().callEvent(event = new CBPacketReceivedEvent(player, packet));
+            if (!event.isCancelled()) {
+                packet.process(netHandlerServer);
+            }
         });
 
         getServer().getPluginManager().registerEvents(
