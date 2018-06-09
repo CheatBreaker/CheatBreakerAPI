@@ -19,9 +19,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -249,16 +247,16 @@ public final class CheatBreakerAPI extends JavaPlugin implements Listener {
         sendPacket(player, new CBPacketRemoveHologram(id));
     }
 
-    public void overrideNametag(LivingEntity target, List<String> nametag, Player viewer) {
-        sendPacket(viewer, new CBPacketOverrideNametags(target.getEntityId(), nametag));
+    public void overrideNametag(Player target, List<String> nametag, Player viewer) {
+        sendPacket(viewer, new CBPacketOverrideNametags(target.getUniqueId(), nametag));
     }
 
-    public void resetNametag(LivingEntity target, Player viewer) {
-        sendPacket(viewer, new CBPacketOverrideNametags(target.getEntityId(), null));
+    public void resetNametag(Player target, Player viewer) {
+        sendPacket(viewer, new CBPacketOverrideNametags(target.getUniqueId(), null));
     }
 
-    public void hideNametag(LivingEntity target, Player viewer) {
-        sendPacket(viewer, new CBPacketOverrideNametags(target.getEntityId(), ImmutableList.of()));
+    public void hideNametag(Player target, Player viewer) {
+        sendPacket(viewer, new CBPacketOverrideNametags(target.getUniqueId(), ImmutableList.of()));
     }
 
     public void sendTitle(Player player, TitleType type, String message, Duration displayTime) {
