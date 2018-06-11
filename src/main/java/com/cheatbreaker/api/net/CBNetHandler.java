@@ -17,7 +17,7 @@ public abstract class CBNetHandler implements ICBNetHandlerServer
     public void handleVoice(CBPacketClientVoice packet) {
         Player player = packet.getAttachment();
         VoiceChannel channel = CheatBreakerAPI.getInstance().getPlayerActiveChannels().get(player.getUniqueId());
-        if (channel == null) return;
+        if (channel == null || CheatBreakerAPI.getInstance().playerHasPlayerMuted(player, player)) return;
 
         channel.getPlayersListening().stream().filter(p -> p != player && !CheatBreakerAPI.getInstance().playerHasPlayerMuted(player, p)).forEach(other ->
                 CheatBreakerAPI.getInstance().sendPacket(other, new CBPacketVoice(player.getUniqueId(), packet.getData())));
