@@ -4,8 +4,8 @@ node {
    }
    
    stage('Build') {
-       def verb = env.BRANCH_NAME == 'master' ? 'deploy' : 'package'
-       sh "${tool 'M3'}/bin/mvn clean ${verb} -U"
+      def revision = env.BRANCH_NAME == 'master' ? '1.0' : env.BRANCH_NAME
+      sh "${tool 'M3'}/bin/mvn clean deploy -Drevision=${revision} -U"
    }
    
    stage('Archive') {
