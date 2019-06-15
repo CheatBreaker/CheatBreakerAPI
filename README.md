@@ -9,13 +9,13 @@ The CheatBreaker API will allow you to detect when a player is running CheatBrea
 
 ## Reporting an issue
 
-If you suspect an issue you can submit one [here](https://github.com/frozenorb/cheatbreakerapi/issues).
+If you suspect an issue you can submit one [here](https://github.com/cheatbreaker/cheatbreakerapi/issues).
 
 ## Get the Source
 
 1. Install maven `sudo apt-get install maven`
 2. Verify installation `mvn -v`
-3. Clone the repository `git clone git@github.com:FrozenOrb/CheatBreakerAPI.git`
+3. Clone the repository `git clone git@github.com:CheatBreaker/CheatBreakerAPI.git`
 4. Navigate to the new folder `cd cheatbreakerapi`
 5. Import `pom.xml` into your IDE
 
@@ -27,8 +27,8 @@ If you suspect an issue you can submit one [here](https://github.com/frozenorb/c
 
 ## Contributing
 
-You can submit a [pull request](https://github.com/FrozenOrb/CheatBreakerAPI/pulls) with your changes.
+You can submit a [pull request](https://github.com/CheatBreaker/CheatBreakerAPI/pulls) with your changes.
 
 ## Documentation
 
-Documentation can be found on the [wiki pages](https://github.com/frozenorb/cheatbreakerapi/wiki).
+Documentation can be found on the [wiki pages](https://github.com/cheatbreaker/cheatbreakerapi/wiki).
