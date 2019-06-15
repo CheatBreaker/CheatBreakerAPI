@@ -1,6 +1,6 @@
 
 <p align="center">
-    <img src="https://www.cheatbreaker.com/assets/images/home-logo.png" width="96" height="96" />
+    <img src="https://user-images.githubusercontent.com/3434520/59546542-3a1a4a80-8ee4-11e9-8e40-ca8832664aef.jpg"/>
 </p>
 
 ## Bukkit-CheatBreakerAPI
